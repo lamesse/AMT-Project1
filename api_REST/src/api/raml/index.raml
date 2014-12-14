@@ -161,10 +161,12 @@ schemas:
                 [
                   "id": 1,
                   "name": "HEIG-VD",
+                  "description": "School of Business and Engineering in Canton de Vaud"
                 ],
                 [
                   "id": 2,
                   "name": "HES-SO",
+                  "description": "Haute école spécialisée de Suisse occidentale"
                 ]
               }
   post:
@@ -310,12 +312,16 @@ schemas:
                     [
                       "id": 1,
                       "name": "Sensor-R2D2",
-                      "type": "robot"
+                      "type": "Robot sensor",
+                      "description": "A little sensor who says *bip bip bip*",
+                      "isPublic": true
                     ],
                     [
                       "id": 2,
                       "name": "Sensor-C3P0",
-                      "type": "robot"
+                      "type": "Robot sensor",
+                      "description": "Sensor for C3P0",
+                      "isPublic": true
                     ]
                   }
       post:
@@ -328,7 +334,7 @@ schemas:
               {
                 "name": "Sensor-R2D2",
                 "description": "A little sensor who says *bip bip bip*",
-                "type": "robot",
+                "type": "Robot sensor",
                 "isPublic": true
               }
         responses:
@@ -346,7 +352,8 @@ schemas:
                       "id": 1,
                       "name": "Sensor-R2D2",
                       "description": "A little sensor who says *bip bip bip*",
-                      "type": "robot"
+                      "type": "Robot sensor",
+                      "isPublic": true
                     }
             404:
               description: Sensor not found.
@@ -372,6 +379,113 @@ schemas:
           responses:
             200:
               description: OK
+        /measures:
+          get:
+            description: Get a list of all measures taken by the sensor.
+            responses:
+              200:
+                body:
+                  application/json:
+                    example: |
+                      {
+                        [
+                          "id": 1,
+                          "value": "42",
+                          "timestamp": "124321314123"
+                        ],
+                        [
+                          "id": 2,
+                          "value": "1337",
+                          "type": "124321314124"
+                        ]
+                      }
+          /{measureId}:
+            get:
+              description: Get a measure by its id.
+              responses:
+                200:
+                  body:
+                    application/json:
+                      example: |
+                        {
+                          "id": 1,
+                          "value": "42",
+                          "timestamp": "124321314123"
+                        }
+                400:
+                  description: Measure not found.
+      /filter/type/{type}:
+        get:
+          description: Get a list of all sensors of this organization filtered by type.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      [
+                        "id": 1,
+                        "name": "Sensor-R2D2",
+                        "type": "Robot sensor",
+                        "description": "A little sensor who says *bip bip bip*",
+                        "isPublic": true
+                      ],
+                      [
+                        "id": 2,
+                        "name": "Sensor-C3P0",
+                        "type": "Robot sensor",
+                        "description": "Sensor for C3P0",
+                        "isPublic": true
+                      ]
+                    }
+      /filter/public/{isPublic}:
+        get:
+          description: Get a list of all sensors of this organization filtered by public.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      [
+                        "id": 1,
+                        "name": "Sensor-R2D2",
+                        "type": "Robot sensor",
+                        "description": "A little sensor who says *bip bip bip*",
+                        "isPublic": true
+                      ],
+                      [
+                        "id": 2,
+                        "name": "Sensor-C3P0",
+                        "type": "Robot sensor",
+                        "description": "Sensor for C3P0",
+                        "isPublic": true
+                      ]
+                    }
+      /filter/type/{type}/public/{isPublic}:
+        get:
+          description: Get a list of all sensors of this organization filtered by type and public.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      [
+                        "id": 1,
+                        "name": "Sensor-R2D2",
+                        "type": "Robot sensor",
+                        "description": "A little sensor who says *bip bip bip*",
+                        "isPublic": true
+                      ],
+                      [
+                        "id": 2,
+                        "name": "Sensor-C3P0",
+                        "type": "Robot sensor",
+                        "description": "Sensor for C3P0",
+                        "isPublic": true
+                      ]
+                    }
     /facts:
       get:
         description: Get a list of all facts of this organization.
@@ -383,11 +497,15 @@ schemas:
                   {
                     [
                       "id": 1,
-                      "type": "R2D2 has observed a lot of humans."
+                      "type": "Robot observation",
+                      "description": "R2D2 has observed a lot of humans.",
+                      "isPublic": true
                     ],
                     [
                       "id": 2,
-                      "type": "C3P0 loves humans."
+                      "type": "Robot observation",
+                      "description": "C3P0 loves humans.",
+                      "isPublic": true
                     ]
                   }
       post:
@@ -398,7 +516,8 @@ schemas:
             schema: fact
             example: |
               {
-                "type" : "R2D2 has observed a lot of humans.",
+              	"type": "Robot observation",
+                "description" : "R2D2 has observed a lot of humans.",
                 "isPublic" : true
               }
         responses:
@@ -406,7 +525,7 @@ schemas:
             description: OK
       /{factId}:
         get:
-          description: Get a sensor by its id.
+          description: Get a fact by its id.
           responses:
             200:
               body:
@@ -414,23 +533,81 @@ schemas:
                   example: |
                     {
                       "id": 1,
-                      "type": "R2D2 has observed a lot of humans."
+                      "type": "Robot observation",
+                      "description": "R2D2 has observed a lot of humans.",
+                      "isPublic": true
                     }
             404:
               description: Fact not found.
-
+      /filter/type/{type}:
+        get:
+          description: Get a list of all facts of this organization filtered by type.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      [
+                        "id": 1,
+                        "type": "Robot observation",
+                        "description": "R2D2 has observed a lot of humans.",
+                        "isPublic": true
+                      ],
+                      [
+                        "id": 2,
+                        "type": "Robot observation",
+                        "description": "C3P0 loves humans.",
+                        "isPublic": true
+                      ]
+                    }
+      /filter/public/{isPublic}:
+        get:
+          description: Get a list of all facts of this organization filtered by public.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      [
+                        "id": 1,
+                        "type": "Robot observation",
+                        "description": "R2D2 has observed a lot of humans.",
+                        "isPublic": true
+                      ],
+                      [
+                        "id": 2,
+                        "type": "Robot observation",
+                        "description": "C3P0 loves humans.",
+                        "isPublic": true
+                      ]
+                    }
+      /filter/type/{type}/public/{isPublic}:
+        get:
+          description: Get a list of all facts of this organization filtered by type and public.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      [
+                        "id": 1,
+                        "type": "Robot observation",
+                        "description": "R2D2 has observed a lot of humans.",
+                        "isPublic": true
+                      ],
+                      [
+                        "id": 2,
+                        "type": "Robot observation",
+                        "description": "C3P0 loves humans.",
+                        "isPublic": true
+                      ]
+                    }
 /sensors:
   get:
     description: Get a list of all public sensors.
-    queryParameters:
-      organizationId:
-        description: Filter the list by organization.
-        required: false
-        type: integer
-      type:
-        description: Filter the list by sensor's type.
-        required: false
-        type: string
     responses:
       200:
         body:
@@ -440,12 +617,14 @@ schemas:
                 [
                   "id": 1,
                   "name": "Sensor-R2D2",
-                  "type": "robot"
+                  "type": "Robot sensor",
+                  "description": "A little sensor who says *bip bip bip*"
                 ],
                 [
                   "id": 2,
                   "name": "Sensor-C3P0",
-                  "type": "robot"
+                  "type": "Robot sensor",
+                  "description": "Sensor for C3P0"
                 ]
               }
   /{sensorId}:
@@ -459,8 +638,8 @@ schemas:
                 {
                   "id": 1,
                   "name": "Sensor-R2D2",
-                  "description": "A little sensor who says *bip bip bip*",
-                  "type": "robot"
+                  "type": "Robot sensor",
+                  "description": "A little sensor who says *bip bip bip*"
                 }
         404:
           description: Sensor not found.
@@ -499,14 +678,75 @@ schemas:
                     }
             400:
               description: Measure not found.
+  /filter/type/{type}:
+    get:
+      description: Get a list of all public sensors filtered by type.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  [
+                    "id": 1,
+                    "name": "Sensor-R2D2",
+                    "type": "Robot sensor",
+                    "description": "A little sensor who says *bip bip bip*"
+                  ],
+                  [
+                    "id": 2,
+                    "name": "Sensor-C3P0",
+                    "type": "Robot sensor",
+                    "description": "Sensor for C3P0"
+                  ]
+                }
+  /filter/organization/{orgId}:
+    get:
+      description: Get a list of all public sensors filtered by organization id.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  [
+                    "id": 1,
+                    "name": "Sensor-R2D2",
+                    "type": "Robot sensor",
+                    "description": "A little sensor who says *bip bip bip*"
+                  ],
+                  [
+                    "id": 2,
+                    "name": "Sensor-C3P0",
+                    "type": "Robot sensor",
+                    "description": "Sensor for C3P0"
+                  ]
+                }
+  /filter/type/{type}/organization/{orgId}:
+    get:
+      description: Get a list of all public sensors filtered by type and organization id.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  [
+                    "id": 1,
+                    "name": "Sensor-R2D2",
+                    "type": "Robot sensor",
+                    "description": "A little sensor who says *bip bip bip*"
+                  ],
+                  [
+                    "id": 2,
+                    "name": "Sensor-C3P0",
+                    "type": "Robot sensor",
+                    "description": "Sensor for C3P0"
+                  ]
+                }
 /facts:
   get:
     description: Get a list of all public facts.
-    queryParameters:
-      organizationId:
-        description: Filter the list by organization.
-        required: false
-        type: integer
     responses:
       200:
         body:
@@ -515,11 +755,13 @@ schemas:
               {
                 [
                   "id": 1,
-                  "type": "R2D2 has observed a lot of humans."
+                  "type": "Robot observation",
+                  "description": "R2D2 has observed a lot of humans."
                 ],
                 [
                   "id": 2,
-                  "type": "C3P0 loves humans."
+                  "type": "Robot observation",
+                  "description": "C3P0 loves humans."
                 ]
               }
   /{factId}:
@@ -532,7 +774,69 @@ schemas:
               example: |
                 {
                   "id": 1,
-                  "type": "R2D2 has observed a lot of humans."
+                  "type": "Robot observation",
+                  "description": "R2D2 has observed a lot of humans."
                 }
         404:
           description: Fact not found.
+  /filter/type/{type}:
+    get:
+      description: Get a list of all public facts filtered by type.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  [
+                    "id": 1,
+                    "type": "Robot observation",
+                    "description": "R2D2 has observed a lot of humans."
+                  ],
+                  [
+                    "id": 2,
+                    "type": "Robot observation",
+                    "description": "C3P0 loves humans."
+                  ]
+                }
+  /filter/organization/{orgId}:
+    get:
+      description: Get a list of all public facts filtered by organization id.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  [
+                    "id": 1,
+                    "type": "Robot observation",
+                    "description": "R2D2 has observed a lot of humans."
+                  ],
+                  [
+                    "id": 2,
+                    "type": "Robot observation",
+                    "description": "C3P0 loves humans."
+                  ]
+                }
+  /filter/type/{type}/organization/{orgId}:
+    get:
+      description: Get a list of all public facts filtered by type and organization id.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  [
+                    "id": 1,
+                    "type": "Robot observation",
+                    "description": "R2D2 has observed a lot of humans."
+                  ],
+                  [
+                    "id": 2,
+                    "type": "Robot observation",
+                    "description": "C3P0 loves humans."
+                  ]
+                }
+

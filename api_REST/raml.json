@@ -48,7 +48,7 @@
 						"200": {
 							"body": {
 								"application/json": {
-									"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"HEIG-VD\",\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"HES-SO\",\n  ]\n}\n"
+									"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"HEIG-VD\",\n    \"description\": \"School of Business and Engineering in Canton de Vaud\"\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"HES-SO\",\n    \"description\": \"Haute école spécialisée de Suisse occidentale\"\n  ]\n}\n"
 								}
 							}
 						}
@@ -243,7 +243,7 @@
 										"200": {
 											"body": {
 												"application/json": {
-													"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"robot\"\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"robot\"\n  ]\n}\n"
+													"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"A little sensor who says *bip bip bip*\",\n    \"isPublic\": true\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"Sensor for C3P0\",\n    \"isPublic\": true\n  ]\n}\n"
 												}
 											}
 										}
@@ -258,7 +258,7 @@
 									"body": {
 										"application/json": {
 											"schema": "{\n  \"name\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"description\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"type\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"isPublic\": {\n    \"type\": \"boolean\",\n    \"required\": true\n  }\n}\n",
-											"example": "{\n  \"name\": \"Sensor-R2D2\",\n  \"description\": \"A little sensor who says *bip bip bip*\",\n  \"type\": \"robot\",\n  \"isPublic\": true\n}\n"
+											"example": "{\n  \"name\": \"Sensor-R2D2\",\n  \"description\": \"A little sensor who says *bip bip bip*\",\n  \"type\": \"Robot sensor\",\n  \"isPublic\": true\n}\n"
 										}
 									},
 									"responses": {
@@ -279,7 +279,7 @@
 												"200": {
 													"body": {
 														"application/json": {
-															"example": "{\n  \"id\": 1,\n  \"name\": \"Sensor-R2D2\",\n  \"description\": \"A little sensor who says *bip bip bip*\",\n  \"type\": \"robot\"\n}\n"
+															"example": "{\n  \"id\": 1,\n  \"name\": \"Sensor-R2D2\",\n  \"description\": \"A little sensor who says *bip bip bip*\",\n  \"type\": \"Robot sensor\",\n  \"isPublic\": true\n}\n"
 														}
 													}
 												},
@@ -320,6 +320,62 @@
 											"method": "delete"
 										}
 									],
+									"resources": [
+										{
+											"relativeUri": "/measures",
+											"methods": [
+												{
+													"description": "Get a list of all measures taken by the sensor.",
+													"responses": {
+														"200": {
+															"body": {
+																"application/json": {
+																	"example": "{\n  [\n    \"id\": 1,\n    \"value\": \"42\",\n    \"timestamp\": \"124321314123\"\n  ],\n  [\n    \"id\": 2,\n    \"value\": \"1337\",\n    \"type\": \"124321314124\"\n  ]\n}\n"
+																}
+															}
+														}
+													},
+													"method": "get"
+												}
+											],
+											"resources": [
+												{
+													"relativeUri": "/{measureId}",
+													"methods": [
+														{
+															"description": "Get a measure by its id.",
+															"responses": {
+																"200": {
+																	"body": {
+																		"application/json": {
+																			"example": "{\n  \"id\": 1,\n  \"value\": \"42\",\n  \"timestamp\": \"124321314123\"\n}\n"
+																		}
+																	}
+																},
+																"400": {
+																	"description": "Measure not found."
+																}
+															},
+															"method": "get"
+														}
+													],
+													"relativeUriPathSegments": [
+														"{measureId}"
+													],
+													"uriParameters": {
+														"measureId": {
+															"type": "string",
+															"required": true,
+															"displayName": "measureId"
+														}
+													}
+												}
+											],
+											"relativeUriPathSegments": [
+												"measures"
+											]
+										}
+									],
 									"relativeUriPathSegments": [
 										"{sensorId}"
 									],
@@ -328,6 +384,103 @@
 											"type": "string",
 											"required": true,
 											"displayName": "sensorId"
+										}
+									}
+								},
+								{
+									"relativeUri": "/filter/type/{type}",
+									"methods": [
+										{
+											"description": "Get a list of all sensors of this organization filtered by type.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"A little sensor who says *bip bip bip*\",\n    \"isPublic\": true\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"Sensor for C3P0\",\n    \"isPublic\": true\n  ]\n}\n"
+														}
+													}
+												}
+											},
+											"method": "get"
+										}
+									],
+									"relativeUriPathSegments": [
+										"filter",
+										"type",
+										"{type}"
+									],
+									"uriParameters": {
+										"type": {
+											"type": "string",
+											"required": true,
+											"displayName": "type"
+										}
+									}
+								},
+								{
+									"relativeUri": "/filter/public/{isPublic}",
+									"methods": [
+										{
+											"description": "Get a list of all sensors of this organization filtered by public.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"A little sensor who says *bip bip bip*\",\n    \"isPublic\": true\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"Sensor for C3P0\",\n    \"isPublic\": true\n  ]\n}\n"
+														}
+													}
+												}
+											},
+											"method": "get"
+										}
+									],
+									"relativeUriPathSegments": [
+										"filter",
+										"public",
+										"{isPublic}"
+									],
+									"uriParameters": {
+										"isPublic": {
+											"type": "string",
+											"required": true,
+											"displayName": "isPublic"
+										}
+									}
+								},
+								{
+									"relativeUri": "/filter/type/{type}/public/{isPublic}",
+									"methods": [
+										{
+											"description": "Get a list of all sensors of this organization filtered by type and public.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"A little sensor who says *bip bip bip*\",\n    \"isPublic\": true\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"Sensor for C3P0\",\n    \"isPublic\": true\n  ]\n}\n"
+														}
+													}
+												}
+											},
+											"method": "get"
+										}
+									],
+									"relativeUriPathSegments": [
+										"filter",
+										"type",
+										"{type}",
+										"public",
+										"{isPublic}"
+									],
+									"uriParameters": {
+										"type": {
+											"type": "string",
+											"required": true,
+											"displayName": "type"
+										},
+										"isPublic": {
+											"type": "string",
+											"required": true,
+											"displayName": "isPublic"
 										}
 									}
 								}
@@ -345,7 +498,7 @@
 										"200": {
 											"body": {
 												"application/json": {
-													"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"R2D2 has observed a lot of humans.\"\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"C3P0 loves humans.\"\n  ]\n}\n"
+													"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"Robot observation\",\n    \"description\": \"R2D2 has observed a lot of humans.\",\n    \"isPublic\": true\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"Robot observation\",\n    \"description\": \"C3P0 loves humans.\",\n    \"isPublic\": true\n  ]\n}\n"
 												}
 											}
 										}
@@ -360,7 +513,7 @@
 									"body": {
 										"application/json": {
 											"schema": "{\n  \"type\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"isPublic\": {\n    \"type\": \"boolean\",\n    \"required\": true\n  }\n}\n",
-											"example": "{\n  \"type\" : \"R2D2 has observed a lot of humans.\",\n  \"isPublic\" : true\n}\n"
+											"example": "{\n\t\"type\": \"Robot observation\",\n  \"description\" : \"R2D2 has observed a lot of humans.\",\n  \"isPublic\" : true\n}\n"
 										}
 									},
 									"responses": {
@@ -376,12 +529,12 @@
 									"relativeUri": "/{factId}",
 									"methods": [
 										{
-											"description": "Get a sensor by its id.",
+											"description": "Get a fact by its id.",
 											"responses": {
 												"200": {
 													"body": {
 														"application/json": {
-															"example": "{\n  \"id\": 1,\n  \"type\": \"R2D2 has observed a lot of humans.\"\n}\n"
+															"example": "{\n  \"id\": 1,\n  \"type\": \"Robot observation\",\n  \"description\": \"R2D2 has observed a lot of humans.\",\n  \"isPublic\": true\n}\n"
 														}
 													}
 												},
@@ -400,6 +553,103 @@
 											"type": "string",
 											"required": true,
 											"displayName": "factId"
+										}
+									}
+								},
+								{
+									"relativeUri": "/filter/type/{type}",
+									"methods": [
+										{
+											"description": "Get a list of all facts of this organization filtered by type.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"Robot observation\",\n    \"description\": \"R2D2 has observed a lot of humans.\",\n    \"isPublic\": true\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"Robot observation\",\n    \"description\": \"C3P0 loves humans.\",\n    \"isPublic\": true\n  ]\n}\n"
+														}
+													}
+												}
+											},
+											"method": "get"
+										}
+									],
+									"relativeUriPathSegments": [
+										"filter",
+										"type",
+										"{type}"
+									],
+									"uriParameters": {
+										"type": {
+											"type": "string",
+											"required": true,
+											"displayName": "type"
+										}
+									}
+								},
+								{
+									"relativeUri": "/filter/public/{isPublic}",
+									"methods": [
+										{
+											"description": "Get a list of all facts of this organization filtered by public.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"Robot observation\",\n    \"description\": \"R2D2 has observed a lot of humans.\",\n    \"isPublic\": true\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"Robot observation\",\n    \"description\": \"C3P0 loves humans.\",\n    \"isPublic\": true\n  ]\n}\n"
+														}
+													}
+												}
+											},
+											"method": "get"
+										}
+									],
+									"relativeUriPathSegments": [
+										"filter",
+										"public",
+										"{isPublic}"
+									],
+									"uriParameters": {
+										"isPublic": {
+											"type": "string",
+											"required": true,
+											"displayName": "isPublic"
+										}
+									}
+								},
+								{
+									"relativeUri": "/filter/type/{type}/public/{isPublic}",
+									"methods": [
+										{
+											"description": "Get a list of all facts of this organization filtered by type and public.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"Robot observation\",\n    \"description\": \"R2D2 has observed a lot of humans.\",\n    \"isPublic\": true\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"Robot observation\",\n    \"description\": \"C3P0 loves humans.\",\n    \"isPublic\": true\n  ]\n}\n"
+														}
+													}
+												}
+											},
+											"method": "get"
+										}
+									],
+									"relativeUriPathSegments": [
+										"filter",
+										"type",
+										"{type}",
+										"public",
+										"{isPublic}"
+									],
+									"uriParameters": {
+										"type": {
+											"type": "string",
+											"required": true,
+											"displayName": "type"
+										},
+										"isPublic": {
+											"type": "string",
+											"required": true,
+											"displayName": "isPublic"
 										}
 									}
 								}
@@ -430,25 +680,11 @@
 			"methods": [
 				{
 					"description": "Get a list of all public sensors.",
-					"queryParameters": {
-						"organizationId": {
-							"description": "Filter the list by organization.",
-							"required": false,
-							"type": "integer",
-							"displayName": "organizationId"
-						},
-						"type": {
-							"description": "Filter the list by sensor's type.",
-							"required": false,
-							"type": "string",
-							"displayName": "type"
-						}
-					},
 					"responses": {
 						"200": {
 							"body": {
 								"application/json": {
-									"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"robot\"\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"robot\"\n  ]\n}\n"
+									"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"A little sensor who says *bip bip bip*\"\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"Sensor for C3P0\"\n  ]\n}\n"
 								}
 							}
 						}
@@ -469,7 +705,7 @@
 								"200": {
 									"body": {
 										"application/json": {
-											"example": "{\n  \"id\": 1,\n  \"name\": \"Sensor-R2D2\",\n  \"description\": \"A little sensor who says *bip bip bip*\",\n  \"type\": \"robot\"\n}\n"
+											"example": "{\n  \"id\": 1,\n  \"name\": \"Sensor-R2D2\",\n  \"type\": \"Robot sensor\",\n  \"description\": \"A little sensor who says *bip bip bip*\"\n}\n"
 										}
 									}
 								},
@@ -546,6 +782,103 @@
 							"displayName": "sensorId"
 						}
 					}
+				},
+				{
+					"relativeUri": "/filter/type/{type}",
+					"methods": [
+						{
+							"description": "Get a list of all public sensors filtered by type.",
+							"responses": {
+								"200": {
+									"body": {
+										"application/json": {
+											"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"A little sensor who says *bip bip bip*\"\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"Sensor for C3P0\"\n  ]\n}\n"
+										}
+									}
+								}
+							},
+							"method": "get"
+						}
+					],
+					"relativeUriPathSegments": [
+						"filter",
+						"type",
+						"{type}"
+					],
+					"uriParameters": {
+						"type": {
+							"type": "string",
+							"required": true,
+							"displayName": "type"
+						}
+					}
+				},
+				{
+					"relativeUri": "/filter/organization/{orgId}",
+					"methods": [
+						{
+							"description": "Get a list of all public sensors filtered by organization id.",
+							"responses": {
+								"200": {
+									"body": {
+										"application/json": {
+											"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"A little sensor who says *bip bip bip*\"\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"Sensor for C3P0\"\n  ]\n}\n"
+										}
+									}
+								}
+							},
+							"method": "get"
+						}
+					],
+					"relativeUriPathSegments": [
+						"filter",
+						"organization",
+						"{orgId}"
+					],
+					"uriParameters": {
+						"orgId": {
+							"type": "string",
+							"required": true,
+							"displayName": "orgId"
+						}
+					}
+				},
+				{
+					"relativeUri": "/filter/type/{type}/organization/{orgId}",
+					"methods": [
+						{
+							"description": "Get a list of all public sensors filtered by type and organization id.",
+							"responses": {
+								"200": {
+									"body": {
+										"application/json": {
+											"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"A little sensor who says *bip bip bip*\"\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"Robot sensor\",\n    \"description\": \"Sensor for C3P0\"\n  ]\n}\n"
+										}
+									}
+								}
+							},
+							"method": "get"
+						}
+					],
+					"relativeUriPathSegments": [
+						"filter",
+						"type",
+						"{type}",
+						"organization",
+						"{orgId}"
+					],
+					"uriParameters": {
+						"type": {
+							"type": "string",
+							"required": true,
+							"displayName": "type"
+						},
+						"orgId": {
+							"type": "string",
+							"required": true,
+							"displayName": "orgId"
+						}
+					}
 				}
 			],
 			"relativeUriPathSegments": [
@@ -557,19 +890,11 @@
 			"methods": [
 				{
 					"description": "Get a list of all public facts.",
-					"queryParameters": {
-						"organizationId": {
-							"description": "Filter the list by organization.",
-							"required": false,
-							"type": "integer",
-							"displayName": "organizationId"
-						}
-					},
 					"responses": {
 						"200": {
 							"body": {
 								"application/json": {
-									"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"R2D2 has observed a lot of humans.\"\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"C3P0 loves humans.\"\n  ]\n}\n"
+									"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"Robot observation\",\n    \"description\": \"R2D2 has observed a lot of humans.\"\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"Robot observation\",\n    \"description\": \"C3P0 loves humans.\"\n  ]\n}\n"
 								}
 							}
 						}
@@ -590,7 +915,7 @@
 								"200": {
 									"body": {
 										"application/json": {
-											"example": "{\n  \"id\": 1,\n  \"type\": \"R2D2 has observed a lot of humans.\"\n}\n"
+											"example": "{\n  \"id\": 1,\n  \"type\": \"Robot observation\",\n  \"description\": \"R2D2 has observed a lot of humans.\"\n}\n"
 										}
 									}
 								},
@@ -609,6 +934,103 @@
 							"type": "string",
 							"required": true,
 							"displayName": "factId"
+						}
+					}
+				},
+				{
+					"relativeUri": "/filter/type/{type}",
+					"methods": [
+						{
+							"description": "Get a list of all public facts filtered by type.",
+							"responses": {
+								"200": {
+									"body": {
+										"application/json": {
+											"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"Robot observation\",\n    \"description\": \"R2D2 has observed a lot of humans.\"\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"Robot observation\",\n    \"description\": \"C3P0 loves humans.\"\n  ]\n}\n"
+										}
+									}
+								}
+							},
+							"method": "get"
+						}
+					],
+					"relativeUriPathSegments": [
+						"filter",
+						"type",
+						"{type}"
+					],
+					"uriParameters": {
+						"type": {
+							"type": "string",
+							"required": true,
+							"displayName": "type"
+						}
+					}
+				},
+				{
+					"relativeUri": "/filter/organization/{orgId}",
+					"methods": [
+						{
+							"description": "Get a list of all public facts filtered by organization id.",
+							"responses": {
+								"200": {
+									"body": {
+										"application/json": {
+											"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"Robot observation\",\n    \"description\": \"R2D2 has observed a lot of humans.\"\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"Robot observation\",\n    \"description\": \"C3P0 loves humans.\"\n  ]\n}\n"
+										}
+									}
+								}
+							},
+							"method": "get"
+						}
+					],
+					"relativeUriPathSegments": [
+						"filter",
+						"organization",
+						"{orgId}"
+					],
+					"uriParameters": {
+						"orgId": {
+							"type": "string",
+							"required": true,
+							"displayName": "orgId"
+						}
+					}
+				},
+				{
+					"relativeUri": "/filter/type/{type}/organization/{orgId}",
+					"methods": [
+						{
+							"description": "Get a list of all public facts filtered by type and organization id.",
+							"responses": {
+								"200": {
+									"body": {
+										"application/json": {
+											"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"Robot observation\",\n    \"description\": \"R2D2 has observed a lot of humans.\"\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"Robot observation\",\n    \"description\": \"C3P0 loves humans.\"\n  ]\n}\n"
+										}
+									}
+								}
+							},
+							"method": "get"
+						}
+					],
+					"relativeUriPathSegments": [
+						"filter",
+						"type",
+						"{type}",
+						"organization",
+						"{orgId}"
+					],
+					"uriParameters": {
+						"type": {
+							"type": "string",
+							"required": true,
+							"displayName": "type"
+						},
+						"orgId": {
+							"type": "string",
+							"required": true,
+							"displayName": "orgId"
 						}
 					}
 				}
