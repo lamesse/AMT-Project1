@@ -1,0 +1,538 @@
+#%RAML 0.8
+---
+title: AMT Project
+baseUri: https://localhost/api/
+protocols: [HTTPS]
+mediaType: application/json
+
+traits:
+  - private: !include _traits/private.raml
+
+schemas:
+  - user: |
+      {
+        "firstName": {
+          "type": "string",
+          "required": true
+        },
+        "lastName": {
+          "type": "string",
+          "required": true
+        },
+        "email": {
+          "type": "string",
+          "required": true
+        },
+        "password": {
+          "type": "string",
+          "required": true
+        }
+      }
+  - userUpdate: |
+      {
+        "firstName": {
+          "type": "string",
+          "required": false
+        },
+        "lastName": {
+          "type": "string",
+          "required": false
+        },
+        "email": {
+          "type": "string",
+          "required": false
+        },
+        "password": {
+          "type": "string",
+          "required": false
+        }
+      }
+  - organization: |
+      {
+        "name": {
+        	"type": "string",
+        	"required": true
+        },
+        "description": {
+        	"type": "string",
+        	"required": true
+        },
+        "contact": {
+            "firstName": {
+              "type": "string",
+              "required": true
+            },
+            "lastName": {
+              "type": "string",
+              "required": true
+            },
+            "email": {
+              "type": "string",
+              "required": true
+            },
+            "password": {
+              "type": "string",
+              "required": true
+            },
+            "required": true
+        }
+      }
+  - organizationUpdate: |
+      {
+        "name": {
+        	"type": "string",
+        	"required": false
+        },
+        "description": {
+        	"type": "string",
+        	"required": false
+        }
+      }
+  - sensor: |
+      {
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "description": {
+          "type": "string",
+          "required": false
+        },
+        "type": {
+          "type": "string",
+          "required": true
+        },
+        "isPublic": {
+          "type": "boolean",
+          "required": true
+        }
+      }
+  - sensorUpdate: |
+      {
+        "name": {
+          "type": "string",
+          "required": false
+        },
+        "description": {
+          "type": "string",
+          "required": false
+        },
+        "type": {
+          "type": "string",
+          "required": false
+        },
+        "isPublic": {
+          "type": "boolean",
+          "required": false
+        }
+      }
+  - measure: |
+      {
+        "value": {
+          "type": "number",
+          "required": true
+        },
+        "timestamp": {
+          "type": "integer",
+          "required": true
+        }
+      }
+  - fact: |
+      {
+        "type": {
+          "type": "string",
+          "required": true
+        },
+        "isPublic": {
+          "type": "boolean",
+          "required": true
+        }
+      }
+
+/organizations:
+  get:
+    description: Get a list of all organizations.
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                [
+                  "id": 1,
+                  "name": "HEIG-VD",
+                ],
+                [
+                  "id": 2,
+                  "name": "HES-SO",
+                ]
+              }
+  post:
+    is: [private]
+    description: Add an organization.
+    body:
+      application/json:
+        schema: organization
+        example: |
+          {
+          	"name": "HEIG-VD",
+            "description": "School of Business and Engineering in Canton de Vaud"
+            "contact": {
+              "firstName": "Antonio",
+              "lastName": "Messerlito",
+              "email": "antonio@messerlito.ch",
+              "password": "12345678"
+            }
+          }
+    responses:
+      200:
+        description: OK
+  /{organizationId}:
+    get:
+      description: Get an organization by its id.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "id": 1,
+                  "name": "HEIG-VD",
+                  "description": "School of Business and Engineering in Canton de Vaud"
+                }
+        404:
+          description: Organization not found.
+    put:
+      is: [private]
+      description: |
+        Update the organization's informations.
+
+        Only the field specified will be updated.
+      body:
+        application/json:
+          schema: organizationUpdate
+          example: |
+            {
+              "description": "School of Business and Engineering in Canton de Vaud"
+            }
+      responses:
+        200:
+          description: OK
+    delete:
+      is: [private]
+      description: Delete the organization.
+      responses:
+        200:
+          description: OK
+    /users:
+      get:
+        description: Get a list of all users of this organization.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  {
+                    [
+                      "id": 1,
+                      "firstName": "Antonio",
+                      "lastName": "Messerlito"
+                    ],
+                    [
+                      "id": 2,
+                      "firstName": "Jonino",
+                      "lastName": "Bischofino"
+                    ]
+                  }
+      post:
+        is: [private]
+        description: Add a user to the organization.
+        body:
+          application/json:
+            schema: user
+            example: |
+              {
+                "firstName": "Antonio",
+                "lastName": "Messerlito",
+                "email": "antonio@messerlito.ch",
+                "password": "12345678"
+              }
+        responses:
+          200:
+            description: OK
+      /{userId}:
+        get:
+          description: Get a user by his id.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      "id": 1,
+                      "firstName": "Antonio",
+                      "lastName": "Messerlito",
+                      "email": "antonio@messerlito.co"
+                    }
+            404:
+              description: User not found.
+        put:
+          is: [private]
+          description: |
+            Update the user's informations.
+          
+            Only the field specified will be updated.
+          body:
+            application/json:
+              schema: userUpdate
+              example: |
+                {
+                  "firstName": "Antonia"
+                }
+          responses:
+            200:
+              description: OK
+        delete:
+          is: [private]
+          description: Delete the user from the organization.
+          responses:
+            200:
+              description: OK
+    /sensors:
+      get:
+        description: Get a list of all sensors of this organization.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  {
+                    [
+                      "id": 1,
+                      "name": "Sensor-R2D2",
+                      "type": "robot"
+                    ],
+                    [
+                      "id": 2,
+                      "name": "Sensor-C3P0",
+                      "type": "robot"
+                    ]
+                  }
+      post:
+        is: [private]
+        description: Add a new sensor.
+        body:
+          application/json:
+            schema: sensor
+            example: |
+              {
+                "name": "Sensor-R2D2",
+                "description": "A little sensor who says *bip bip bip*",
+                "type": "robot",
+                "isPublic": true
+              }
+        responses:
+          200:
+            description: OK
+      /{sensorId}:
+        get:
+          description: Get a sensor by its id.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      "id": 1,
+                      "name": "Sensor-R2D2",
+                      "description": "A little sensor who says *bip bip bip*",
+                      "type": "robot"
+                    }
+            404:
+              description: Sensor not found.
+        put:
+          is: [private]
+          description: |
+            Update the sensor's informations.
+          
+            Only the field specified will be updated.
+          body:
+            application/json:
+              schema: sensorUpdate
+              example: |
+                {
+                  "isPublic": false
+                }
+          responses:
+            200:
+              description: OK
+        delete:
+          is: [private]
+          description: Delete the sensor.
+          responses:
+            200:
+              description: OK
+    /facts:
+      get:
+        description: Get a list of all facts of this organization.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  {
+                    [
+                      "id": 1,
+                      "type": "R2D2 has observed a lot of humans."
+                    ],
+                    [
+                      "id": 2,
+                      "type": "C3P0 loves humans."
+                    ]
+                  }
+      post:
+        is: [private]
+        description: Add a new fact.
+        body:
+          application/json:
+            schema: fact
+            example: |
+              {
+                "type" : "R2D2 has observed a lot of humans.",
+                "isPublic" : true
+              }
+        responses:
+          200:
+            description: OK
+      /{factId}:
+        get:
+          description: Get a sensor by its id.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      "id": 1,
+                      "type": "R2D2 has observed a lot of humans."
+                    }
+            404:
+              description: Fact not found.
+
+/sensors:
+  get:
+    description: Get a list of all public sensors.
+    queryParameters:
+      organizationId:
+        description: Filter the list by organization.
+        required: false
+        type: integer
+      type:
+        description: Filter the list by sensor's type.
+        required: false
+        type: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                [
+                  "id": 1,
+                  "name": "Sensor-R2D2",
+                  "type": "robot"
+                ],
+                [
+                  "id": 2,
+                  "name": "Sensor-C3P0",
+                  "type": "robot"
+                ]
+              }
+  /{sensorId}:
+    get:
+      description: Get a public sensor by its id.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "id": 1,
+                  "name": "Sensor-R2D2",
+                  "description": "A little sensor who says *bip bip bip*",
+                  "type": "robot"
+                }
+        404:
+          description: Sensor not found.
+    /measures:
+      get:
+        description: Get a list of all measures taken by the sensor.
+        responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  {
+                    [
+                      "id": 1,
+                      "value": "42",
+                      "timestamp": "124321314123"
+                    ],
+                    [
+                      "id": 2,
+                      "value": "1337",
+                      "type": "124321314124"
+                    ]
+                  }
+      /{measureId}:
+        get:
+          description: Get a measure by its id.
+          responses:
+            200:
+              body:
+                application/json:
+                  example: |
+                    {
+                      "id": 1,
+                      "value": "42",
+                      "timestamp": "124321314123"
+                    }
+            400:
+              description: Measure not found.
+/facts:
+  get:
+    description: Get a list of all public facts.
+    queryParameters:
+      organizationId:
+        description: Filter the list by organization.
+        required: false
+        type: integer
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                [
+                  "id": 1,
+                  "type": "R2D2 has observed a lot of humans."
+                ],
+                [
+                  "id": 2,
+                  "type": "C3P0 loves humans."
+                ]
+              }
+  /{factId}:
+    get:
+      description: Get a public fact by its id.
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "id": 1,
+                  "type": "R2D2 has observed a lot of humans."
+                }
+        404:
+          description: Fact not found.

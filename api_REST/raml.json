@@ -1,0 +1,621 @@
+{
+	"title": "AMT Project",
+	"baseUri": "https://localhost/api/",
+	"protocols": [
+		"HTTPS"
+	],
+	"mediaType": "application/json",
+	"traits": [
+		{
+			"private": {
+				"usage": "Just a marker that a resource of method is not part of the public API."
+			}
+		}
+	],
+	"schemas": [
+		{
+			"user": "{\n  \"firstName\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"lastName\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"email\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"password\": {\n    \"type\": \"string\",\n    \"required\": true\n  }\n}\n"
+		},
+		{
+			"userUpdate": "{\n  \"firstName\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"lastName\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"email\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"password\": {\n    \"type\": \"string\",\n    \"required\": false\n  }\n}\n"
+		},
+		{
+			"organization": "{\n  \"name\": {\n  \t\"type\": \"string\",\n  \t\"required\": true\n  },\n  \"description\": {\n  \t\"type\": \"string\",\n  \t\"required\": true\n  },\n  \"contact\": {\n      \"firstName\": {\n        \"type\": \"string\",\n        \"required\": true\n      },\n      \"lastName\": {\n        \"type\": \"string\",\n        \"required\": true\n      },\n      \"email\": {\n        \"type\": \"string\",\n        \"required\": true\n      },\n      \"password\": {\n        \"type\": \"string\",\n        \"required\": true\n      },\n      \"required\": true\n  }\n}\n"
+		},
+		{
+			"organizationUpdate": "{\n  \"name\": {\n  \t\"type\": \"string\",\n  \t\"required\": false\n  },\n  \"description\": {\n  \t\"type\": \"string\",\n  \t\"required\": false\n  }\n}\n"
+		},
+		{
+			"sensor": "{\n  \"name\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"description\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"type\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"isPublic\": {\n    \"type\": \"boolean\",\n    \"required\": true\n  }\n}\n"
+		},
+		{
+			"sensorUpdate": "{\n  \"name\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"description\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"type\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"isPublic\": {\n    \"type\": \"boolean\",\n    \"required\": false\n  }\n}\n"
+		},
+		{
+			"measure": "{\n  \"value\": {\n    \"type\": \"number\",\n    \"required\": true\n  },\n  \"timestamp\": {\n    \"type\": \"integer\",\n    \"required\": true\n  }\n}\n"
+		},
+		{
+			"fact": "{\n  \"type\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"isPublic\": {\n    \"type\": \"boolean\",\n    \"required\": true\n  }\n}\n"
+		}
+	],
+	"resources": [
+		{
+			"relativeUri": "/organizations",
+			"methods": [
+				{
+					"description": "Get a list of all organizations.",
+					"responses": {
+						"200": {
+							"body": {
+								"application/json": {
+									"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"HEIG-VD\",\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"HES-SO\",\n  ]\n}\n"
+								}
+							}
+						}
+					},
+					"protocols": [
+						"HTTPS"
+					],
+					"method": "get"
+				},
+				{
+					"is": [
+						"private"
+					],
+					"description": "Add an organization.",
+					"body": {
+						"application/json": {
+							"schema": "{\n  \"name\": {\n  \t\"type\": \"string\",\n  \t\"required\": true\n  },\n  \"description\": {\n  \t\"type\": \"string\",\n  \t\"required\": true\n  },\n  \"contact\": {\n      \"firstName\": {\n        \"type\": \"string\",\n        \"required\": true\n      },\n      \"lastName\": {\n        \"type\": \"string\",\n        \"required\": true\n      },\n      \"email\": {\n        \"type\": \"string\",\n        \"required\": true\n      },\n      \"password\": {\n        \"type\": \"string\",\n        \"required\": true\n      },\n      \"required\": true\n  }\n}\n",
+							"example": "{\n\t\"name\": \"HEIG-VD\",\n  \"description\": \"School of Business and Engineering in Canton de Vaud\"\n  \"contact\": {\n    \"firstName\": \"Antonio\",\n    \"lastName\": \"Messerlito\",\n    \"email\": \"antonio@messerlito.ch\",\n    \"password\": \"12345678\"\n  }\n}\n"
+						}
+					},
+					"responses": {
+						"200": {
+							"description": "OK"
+						}
+					},
+					"protocols": [
+						"HTTPS"
+					],
+					"method": "post"
+				}
+			],
+			"resources": [
+				{
+					"relativeUri": "/{organizationId}",
+					"methods": [
+						{
+							"description": "Get an organization by its id.",
+							"responses": {
+								"200": {
+									"body": {
+										"application/json": {
+											"example": "{\n  \"id\": 1,\n  \"name\": \"HEIG-VD\",\n  \"description\": \"School of Business and Engineering in Canton de Vaud\"\n}\n"
+										}
+									}
+								},
+								"404": {
+									"description": "Organization not found."
+								}
+							},
+							"method": "get"
+						},
+						{
+							"is": [
+								"private"
+							],
+							"description": "Update the organization's informations.\n\nOnly the field specified will be updated.\n",
+							"body": {
+								"application/json": {
+									"schema": "{\n  \"name\": {\n  \t\"type\": \"string\",\n  \t\"required\": false\n  },\n  \"description\": {\n  \t\"type\": \"string\",\n  \t\"required\": false\n  }\n}\n",
+									"example": "{\n  \"description\": \"School of Business and Engineering in Canton de Vaud\"\n}\n"
+								}
+							},
+							"responses": {
+								"200": {
+									"description": "OK"
+								}
+							},
+							"method": "put"
+						},
+						{
+							"is": [
+								"private"
+							],
+							"description": "Delete the organization.",
+							"responses": {
+								"200": {
+									"description": "OK"
+								}
+							},
+							"method": "delete"
+						}
+					],
+					"resources": [
+						{
+							"relativeUri": "/users",
+							"methods": [
+								{
+									"description": "Get a list of all users of this organization.",
+									"responses": {
+										"200": {
+											"body": {
+												"application/json": {
+													"example": "{\n  [\n    \"id\": 1,\n    \"firstName\": \"Antonio\",\n    \"lastName\": \"Messerlito\"\n  ],\n  [\n    \"id\": 2,\n    \"firstName\": \"Jonino\",\n    \"lastName\": \"Bischofino\"\n  ]\n}\n"
+												}
+											}
+										}
+									},
+									"method": "get"
+								},
+								{
+									"is": [
+										"private"
+									],
+									"description": "Add a user to the organization.",
+									"body": {
+										"application/json": {
+											"schema": "{\n  \"firstName\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"lastName\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"email\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"password\": {\n    \"type\": \"string\",\n    \"required\": true\n  }\n}\n",
+											"example": "{\n  \"firstName\": \"Antonio\",\n  \"lastName\": \"Messerlito\",\n  \"email\": \"antonio@messerlito.ch\",\n  \"password\": \"12345678\"\n}\n"
+										}
+									},
+									"responses": {
+										"200": {
+											"description": "OK"
+										}
+									},
+									"method": "post"
+								}
+							],
+							"resources": [
+								{
+									"relativeUri": "/{userId}",
+									"methods": [
+										{
+											"description": "Get a user by his id.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  \"id\": 1,\n  \"firstName\": \"Antonio\",\n  \"lastName\": \"Messerlito\",\n  \"email\": \"antonio@messerlito.co\"\n}\n"
+														}
+													}
+												},
+												"404": {
+													"description": "User not found."
+												}
+											},
+											"method": "get"
+										},
+										{
+											"is": [
+												"private"
+											],
+											"description": "Update the user's informations.\n\nOnly the field specified will be updated.\n",
+											"body": {
+												"application/json": {
+													"schema": "{\n  \"firstName\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"lastName\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"email\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"password\": {\n    \"type\": \"string\",\n    \"required\": false\n  }\n}\n",
+													"example": "{\n  \"firstName\": \"Antonia\"\n}\n"
+												}
+											},
+											"responses": {
+												"200": {
+													"description": "OK"
+												}
+											},
+											"method": "put"
+										},
+										{
+											"is": [
+												"private"
+											],
+											"description": "Delete the user from the organization.",
+											"responses": {
+												"200": {
+													"description": "OK"
+												}
+											},
+											"method": "delete"
+										}
+									],
+									"relativeUriPathSegments": [
+										"{userId}"
+									],
+									"uriParameters": {
+										"userId": {
+											"type": "string",
+											"required": true,
+											"displayName": "userId"
+										}
+									}
+								}
+							],
+							"relativeUriPathSegments": [
+								"users"
+							]
+						},
+						{
+							"relativeUri": "/sensors",
+							"methods": [
+								{
+									"description": "Get a list of all sensors of this organization.",
+									"responses": {
+										"200": {
+											"body": {
+												"application/json": {
+													"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"robot\"\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"robot\"\n  ]\n}\n"
+												}
+											}
+										}
+									},
+									"method": "get"
+								},
+								{
+									"is": [
+										"private"
+									],
+									"description": "Add a new sensor.",
+									"body": {
+										"application/json": {
+											"schema": "{\n  \"name\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"description\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"type\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"isPublic\": {\n    \"type\": \"boolean\",\n    \"required\": true\n  }\n}\n",
+											"example": "{\n  \"name\": \"Sensor-R2D2\",\n  \"description\": \"A little sensor who says *bip bip bip*\",\n  \"type\": \"robot\",\n  \"isPublic\": true\n}\n"
+										}
+									},
+									"responses": {
+										"200": {
+											"description": "OK"
+										}
+									},
+									"method": "post"
+								}
+							],
+							"resources": [
+								{
+									"relativeUri": "/{sensorId}",
+									"methods": [
+										{
+											"description": "Get a sensor by its id.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  \"id\": 1,\n  \"name\": \"Sensor-R2D2\",\n  \"description\": \"A little sensor who says *bip bip bip*\",\n  \"type\": \"robot\"\n}\n"
+														}
+													}
+												},
+												"404": {
+													"description": "Sensor not found."
+												}
+											},
+											"method": "get"
+										},
+										{
+											"is": [
+												"private"
+											],
+											"description": "Update the sensor's informations.\n\nOnly the field specified will be updated.\n",
+											"body": {
+												"application/json": {
+													"schema": "{\n  \"name\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"description\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"type\": {\n    \"type\": \"string\",\n    \"required\": false\n  },\n  \"isPublic\": {\n    \"type\": \"boolean\",\n    \"required\": false\n  }\n}\n",
+													"example": "{\n  \"isPublic\": false\n}\n"
+												}
+											},
+											"responses": {
+												"200": {
+													"description": "OK"
+												}
+											},
+											"method": "put"
+										},
+										{
+											"is": [
+												"private"
+											],
+											"description": "Delete the sensor.",
+											"responses": {
+												"200": {
+													"description": "OK"
+												}
+											},
+											"method": "delete"
+										}
+									],
+									"relativeUriPathSegments": [
+										"{sensorId}"
+									],
+									"uriParameters": {
+										"sensorId": {
+											"type": "string",
+											"required": true,
+											"displayName": "sensorId"
+										}
+									}
+								}
+							],
+							"relativeUriPathSegments": [
+								"sensors"
+							]
+						},
+						{
+							"relativeUri": "/facts",
+							"methods": [
+								{
+									"description": "Get a list of all facts of this organization.",
+									"responses": {
+										"200": {
+											"body": {
+												"application/json": {
+													"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"R2D2 has observed a lot of humans.\"\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"C3P0 loves humans.\"\n  ]\n}\n"
+												}
+											}
+										}
+									},
+									"method": "get"
+								},
+								{
+									"is": [
+										"private"
+									],
+									"description": "Add a new fact.",
+									"body": {
+										"application/json": {
+											"schema": "{\n  \"type\": {\n    \"type\": \"string\",\n    \"required\": true\n  },\n  \"isPublic\": {\n    \"type\": \"boolean\",\n    \"required\": true\n  }\n}\n",
+											"example": "{\n  \"type\" : \"R2D2 has observed a lot of humans.\",\n  \"isPublic\" : true\n}\n"
+										}
+									},
+									"responses": {
+										"200": {
+											"description": "OK"
+										}
+									},
+									"method": "post"
+								}
+							],
+							"resources": [
+								{
+									"relativeUri": "/{factId}",
+									"methods": [
+										{
+											"description": "Get a sensor by its id.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  \"id\": 1,\n  \"type\": \"R2D2 has observed a lot of humans.\"\n}\n"
+														}
+													}
+												},
+												"404": {
+													"description": "Fact not found."
+												}
+											},
+											"method": "get"
+										}
+									],
+									"relativeUriPathSegments": [
+										"{factId}"
+									],
+									"uriParameters": {
+										"factId": {
+											"type": "string",
+											"required": true,
+											"displayName": "factId"
+										}
+									}
+								}
+							],
+							"relativeUriPathSegments": [
+								"facts"
+							]
+						}
+					],
+					"relativeUriPathSegments": [
+						"{organizationId}"
+					],
+					"uriParameters": {
+						"organizationId": {
+							"type": "string",
+							"required": true,
+							"displayName": "organizationId"
+						}
+					}
+				}
+			],
+			"relativeUriPathSegments": [
+				"organizations"
+			]
+		},
+		{
+			"relativeUri": "/sensors",
+			"methods": [
+				{
+					"description": "Get a list of all public sensors.",
+					"queryParameters": {
+						"organizationId": {
+							"description": "Filter the list by organization.",
+							"required": false,
+							"type": "integer",
+							"displayName": "organizationId"
+						},
+						"type": {
+							"description": "Filter the list by sensor's type.",
+							"required": false,
+							"type": "string",
+							"displayName": "type"
+						}
+					},
+					"responses": {
+						"200": {
+							"body": {
+								"application/json": {
+									"example": "{\n  [\n    \"id\": 1,\n    \"name\": \"Sensor-R2D2\",\n    \"type\": \"robot\"\n  ],\n  [\n    \"id\": 2,\n    \"name\": \"Sensor-C3P0\",\n    \"type\": \"robot\"\n  ]\n}\n"
+								}
+							}
+						}
+					},
+					"protocols": [
+						"HTTPS"
+					],
+					"method": "get"
+				}
+			],
+			"resources": [
+				{
+					"relativeUri": "/{sensorId}",
+					"methods": [
+						{
+							"description": "Get a public sensor by its id.",
+							"responses": {
+								"200": {
+									"body": {
+										"application/json": {
+											"example": "{\n  \"id\": 1,\n  \"name\": \"Sensor-R2D2\",\n  \"description\": \"A little sensor who says *bip bip bip*\",\n  \"type\": \"robot\"\n}\n"
+										}
+									}
+								},
+								"404": {
+									"description": "Sensor not found."
+								}
+							},
+							"method": "get"
+						}
+					],
+					"resources": [
+						{
+							"relativeUri": "/measures",
+							"methods": [
+								{
+									"description": "Get a list of all measures taken by the sensor.",
+									"responses": {
+										"200": {
+											"body": {
+												"application/json": {
+													"example": "{\n  [\n    \"id\": 1,\n    \"value\": \"42\",\n    \"timestamp\": \"124321314123\"\n  ],\n  [\n    \"id\": 2,\n    \"value\": \"1337\",\n    \"type\": \"124321314124\"\n  ]\n}\n"
+												}
+											}
+										}
+									},
+									"method": "get"
+								}
+							],
+							"resources": [
+								{
+									"relativeUri": "/{measureId}",
+									"methods": [
+										{
+											"description": "Get a measure by its id.",
+											"responses": {
+												"200": {
+													"body": {
+														"application/json": {
+															"example": "{\n  \"id\": 1,\n  \"value\": \"42\",\n  \"timestamp\": \"124321314123\"\n}\n"
+														}
+													}
+												},
+												"400": {
+													"description": "Measure not found."
+												}
+											},
+											"method": "get"
+										}
+									],
+									"relativeUriPathSegments": [
+										"{measureId}"
+									],
+									"uriParameters": {
+										"measureId": {
+											"type": "string",
+											"required": true,
+											"displayName": "measureId"
+										}
+									}
+								}
+							],
+							"relativeUriPathSegments": [
+								"measures"
+							]
+						}
+					],
+					"relativeUriPathSegments": [
+						"{sensorId}"
+					],
+					"uriParameters": {
+						"sensorId": {
+							"type": "string",
+							"required": true,
+							"displayName": "sensorId"
+						}
+					}
+				}
+			],
+			"relativeUriPathSegments": [
+				"sensors"
+			]
+		},
+		{
+			"relativeUri": "/facts",
+			"methods": [
+				{
+					"description": "Get a list of all public facts.",
+					"queryParameters": {
+						"organizationId": {
+							"description": "Filter the list by organization.",
+							"required": false,
+							"type": "integer",
+							"displayName": "organizationId"
+						}
+					},
+					"responses": {
+						"200": {
+							"body": {
+								"application/json": {
+									"example": "{\n  [\n    \"id\": 1,\n    \"type\": \"R2D2 has observed a lot of humans.\"\n  ],\n  [\n    \"id\": 2,\n    \"type\": \"C3P0 loves humans.\"\n  ]\n}\n"
+								}
+							}
+						}
+					},
+					"protocols": [
+						"HTTPS"
+					],
+					"method": "get"
+				}
+			],
+			"resources": [
+				{
+					"relativeUri": "/{factId}",
+					"methods": [
+						{
+							"description": "Get a public fact by its id.",
+							"responses": {
+								"200": {
+									"body": {
+										"application/json": {
+											"example": "{\n  \"id\": 1,\n  \"type\": \"R2D2 has observed a lot of humans.\"\n}\n"
+										}
+									}
+								},
+								"404": {
+									"description": "Fact not found."
+								}
+							},
+							"method": "get"
+						}
+					],
+					"relativeUriPathSegments": [
+						"{factId}"
+					],
+					"uriParameters": {
+						"factId": {
+							"type": "string",
+							"required": true,
+							"displayName": "factId"
+						}
+					}
+				}
+			],
+			"relativeUriPathSegments": [
+				"facts"
+			]
+		}
+	]
+}
