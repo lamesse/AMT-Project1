@@ -32,6 +32,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 @Path("/facts")
 @Stateless
@@ -42,8 +43,20 @@ public class ServiceFact {
 
     @GET // OK
     @Produces("application/json")
-    public List<FactPublicDTO> getFacts() {
-        return convertFactsToFactsDTO(factDAO.findPublic());
+    public List<FactPublicDTO> getFacts(@QueryParam("orgId") String orgId, @QueryParam("type") String type) {
+        if (orgId == null && type == null) {
+            // no query param
+            return convertFactsToFactsDTO(factDAO.findPublic());
+        } else if (type == null) {
+            // query param : orgId
+            return convertFactsToFactsDTO(factDAO.findPublicByOrganization(Long.parseLong(orgId)));
+        } else if (orgId == null) {
+            // query param : type
+            return convertFactsToFactsDTO(factDAO.findPublicByType(type));
+        } else {
+            // query param : orgId && type
+            return convertFactsToFactsDTO(factDAO.findPublicByTypeAndOrganization(type, Long.parseLong(orgId)));
+        }
     }
 
     @GET // OK
@@ -53,26 +66,26 @@ public class ServiceFact {
         return convertFactsToFactsDTO(factDAO.findPublicById(Long.parseLong(factId))).get(0);
     }
 
-    @GET // OK
-    @Path("/filter/type/{type}")
-    @Produces("application/json")
-    public List<FactPublicDTO> getFilteredFactsByType(@PathParam("type") String type) {
-        return convertFactsToFactsDTO(factDAO.findPublicByType(type));
-    }
-
-    @GET // OK
-    @Path("/filter/organization/{orgId}")
-    @Produces("application/json")
-    public List<FactPublicDTO> getFilteredFactsByOrganization(@PathParam("orgId") String orgId) {
-        return convertFactsToFactsDTO(factDAO.findPublicByOrganization(Long.parseLong(orgId)));
-    }
-
-    @GET // OK
-    @Path("/filter/type/{type}/organization/{orgId}")
-    @Produces("application/json")
-    public List<FactPublicDTO> getFilteredFactsByTypeAndOrganization(@PathParam("type") String type, @PathParam("orgId") String orgId) {
-        return convertFactsToFactsDTO(factDAO.findPublicByTypeAndOrganization(type, Long.parseLong(orgId)));
-    }
+//    @GET // OK
+//    @Path("/filter/type/{type}")
+//    @Produces("application/json")
+//    public List<FactPublicDTO> getFilteredFactsByType(@PathParam("type") String type) {
+//        return convertFactsToFactsDTO(factDAO.findPublicByType(type));
+//    }
+//
+//    @GET // OK
+//    @Path("/filter/organization/{orgId}")
+//    @Produces("application/json")
+//    public List<FactPublicDTO> getFilteredFactsByOrganization(@PathParam("orgId") String orgId) {
+//        return convertFactsToFactsDTO(factDAO.findPublicByOrganization(Long.parseLong(orgId)));
+//    }
+//
+//    @GET // OK
+//    @Path("/filter/type/{type}/organization/{orgId}")
+//    @Produces("application/json")
+//    public List<FactPublicDTO> getFilteredFactsByTypeAndOrganization(@PathParam("type") String type, @PathParam("orgId") String orgId) {
+//        return convertFactsToFactsDTO(factDAO.findPublicByTypeAndOrganization(type, Long.parseLong(orgId)));
+//    }
 
     private List<FactPublicDTO> convertFactsToFactsDTO(List<Fact> list) {
         List<FactPublicDTO> result = new LinkedList<>();

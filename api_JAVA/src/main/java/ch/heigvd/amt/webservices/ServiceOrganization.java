@@ -48,6 +48,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 @Path("/organizations")
@@ -244,56 +245,80 @@ public class ServiceOrganization {
     }
     /*=====================================================================*/
 
-    /*=====================================================================*/
+    /*===============================================================================================================================*/
+    /*===============================================================================================================================*/
+    /*===============================================================================================================================*/
+    /*===============================================================================================================================*/
+    /*===============================================================================================================================*/
+    @POST // OK
+    @Path("/{orgId}/sensors/{sensorId}/measures")
+    @Consumes("application/json")
+    public Response addMeasure(Measure measure, @PathParam("sensorId") String sensorId) {
+        measure.setSensor(sensDAO.find(Long.parseLong(sensorId)));
+        mesDAO.create(measure);
+        return Response.status(201).entity("CREATED").build();
+    }
+    
+    
     @GET // OK
     @Path("/{orgId}/facts")
     @Produces("application/json")
-    public List<FactDTO> getOrganizationFacts(@PathParam("orgId") String id) {
-        return convertFactsToFactsDTO(factDAO.findByOrg(Long.parseLong(id)));
+    public List<FactDTO> getOrganizationFacts(@PathParam("orgId") String orgId, @QueryParam("type") String type, @QueryParam("public") String isPublic) {
+        if (type == null && isPublic == null) {
+            // no query param
+            return convertFactsToFactsDTO(factDAO.findByOrg(Long.parseLong(orgId)));
+        } else if (isPublic == null) {
+            // query param : type
+            return convertFactsToFactsDTO(factDAO.findByOrgAndType(Long.parseLong(orgId), type));
+        } else if (type == null) {
+            // query param : isPublic
+            return convertFactsToFactsDTO(factDAO.findByOrgAndPublic(Long.parseLong(orgId), isPublic.equals("true")));
+        } else {
+            // query param : type && isPublic
+            return convertFactsToFactsDTO(factDAO.findByOrgTypeAndPublic(Long.parseLong(orgId), type, isPublic.equals("true")));
+        }
     }
 
-    @POST // OK
-    @Path("/{orgId}/facts")
-    @Consumes("application/json")
-    public Response addOrganizationFact(Fact fact, @PathParam("orgId") String id) {
-        fact.setOrg(organizationDAO.find(Long.parseLong(id)).get(0));
-        factDAO.create(fact);
-        return Response.status(201).entity("CREATED").build();
-    }
-    /*=====================================================================*/
-
-    /*=====================================================================*/
+//    @POST // OK
+//    @Path("/{orgId}/facts")
+//    @Consumes("application/json")
+//    public Response addOrganizationFact(Fact fact, @PathParam("orgId") String id) {
+//        fact.setOrg(organizationDAO.find(Long.parseLong(id)).get(0));
+//        factDAO.create(fact);
+//        return Response.status(201).entity("CREATED").build();
+//    }
     @GET // OK
     @Path("/{orgId}/facts/{factId}")
     @Produces("application/json")
     public FactDTO getOrganizationFactById(@PathParam("orgId") String orgId, @PathParam("factId") String factId) {
         return convertFactsToFactsDTO(factDAO.findByOrg(Long.parseLong(orgId), Long.parseLong(factId))).get(0);
     }
-    /*=====================================================================*/
 
-    /*=====================================================================*/
-    @GET // OK
-    @Path("/{orgId}/facts/filter/type/{type}")
-    @Produces("application/json")
-    public List<FactDTO> getFilteredFactsByType(@PathParam("orgId") String orgId, @PathParam("type") String type) {
-        return convertFactsToFactsDTO(factDAO.findByOrgAndType(Long.parseLong(orgId), type));
-    }
-
-    @GET // OK
-    @Path("/{orgId}/facts/filter/public/{isPublic}")
-    @Produces("application/json")
-    public List<FactDTO> getFilteredFactsByPublic(@PathParam("orgId") String orgId, @PathParam("isPublic") String isPublic) {
-        return convertFactsToFactsDTO(factDAO.findByOrgAndPublic(Long.parseLong(orgId), isPublic.equals("true")));
-    }
-
-    @GET // OK
-    @Path("/{orgId}/facts/filter/type/{type}/public/{isPublic}")
-    @Produces("application/json")
-    public List<FactDTO> getFilteredFactsByTypeAndPublic(@PathParam("orgId") String orgId, @PathParam("type") String type, @PathParam("isPublic") String isPublic) {
-        return convertFactsToFactsDTO(factDAO.findByOrgTypeAndPublic(Long.parseLong(orgId), type, isPublic.equals("true")));
-    }
-    /*=====================================================================*/
-
+//    @GET // OK
+//    @Path("/{orgId}/facts/filter/type/{type}")
+//    @Produces("application/json")
+//    public List<FactDTO> getFilteredFactsByType(@PathParam("orgId") String orgId, @PathParam("type") String type) {
+//        return convertFactsToFactsDTO(factDAO.findByOrgAndType(Long.parseLong(orgId), type));
+//    }
+//
+//    @GET // OK
+//    @Path("/{orgId}/facts/filter/public/{isPublic}")
+//    @Produces("application/json")
+//    public List<FactDTO> getFilteredFactsByPublic(@PathParam("orgId") String orgId, @PathParam("isPublic") String isPublic) {
+//        return convertFactsToFactsDTO(factDAO.findByOrgAndPublic(Long.parseLong(orgId), isPublic.equals("true")));
+//    }
+//
+//    @GET // OK
+//    @Path("/{orgId}/facts/filter/type/{type}/public/{isPublic}")
+//    @Produces("application/json")
+//    public List<FactDTO> getFilteredFactsByTypeAndPublic(@PathParam("orgId") String orgId, @PathParam("type") String type, @PathParam("isPublic") String isPublic) {
+//        return convertFactsToFactsDTO(factDAO.findByOrgTypeAndPublic(Long.parseLong(orgId), type, isPublic.equals("true")));
+//    }
+    /*===============================================================================================================================*/
+    /*===============================================================================================================================*/
+    /*===============================================================================================================================*/
+    /*===============================================================================================================================*/
+    /*===============================================================================================================================*/
     private List<OrganizationDTO> convertOrgnanizationsToOrganizationsDTO(List<Organization> list) {
         List<OrganizationDTO> result = new LinkedList<>();
         for (Organization o : list) {
