@@ -24,6 +24,15 @@ For more information, just go to API Reference, then Resources.
 
 [github]: https://github.com/wasadigi/Teaching-HEIGVD-AMT/tree/master/lectures/lecture-07
 
+## Installation
+* Clone the git repository [https://github.com/lamesse/AMT-Project1.git](https://github.com/lamesse/AMT-Project1.git) 
+* Compile and run it into a glassfish with a working mysql database.
+* Generate data by launching [http://localhost:8080/api/generator](http://localhost:8080/api/generator)
+
 ## Domain modeling
+This is the domain modeling of the project.
 
 ![Domain modeling](domainModeling.png)
+
+## Authors
+Jonathan Bischof & Antoine Messerli
