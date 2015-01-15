@@ -69,7 +69,7 @@ public class Generator implements IGenerator {
     private final static String firstName = "Eduardo";
     private final static String lastName = "Sanchez";
     private final static String password = "toto";
-    private final static String email = firstName + "." + lastName + "@" + organization.toLowerCase() + ".ch";
+    private final static String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@" + organization.toLowerCase() + ".ch";
     private final static String[] sensorType = {"Quantum sensor", "Speed sensor"};
     private final static int NUMBER_OF_SENSORS_PER_TYPE = 10;
 

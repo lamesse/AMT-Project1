@@ -59,12 +59,12 @@ public class ServiceFact {
         }
     }
 
-    @GET // OK
-    @Path("/{factId}")
-    @Produces("application/json")
-    public FactPublicDTO getFactById(@PathParam("factId") String factId) {
-        return convertFactsToFactsDTO(factDAO.findPublicById(Long.parseLong(factId))).get(0);
-    }
+//    @GET // OK
+//    @Path("/{factId}")
+//    @Produces("application/json")
+//    public FactPublicDTO getFactById(@PathParam("factId") String factId) {
+//        return convertFactsToFactsDTO(factDAO.findPublicById(Long.parseLong(factId))).get(0);
+//    }
 
 //    @GET // OK
 //    @Path("/filter/type/{type}")

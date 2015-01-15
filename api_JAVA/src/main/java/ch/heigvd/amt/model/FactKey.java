@@ -6,17 +6,25 @@
 package ch.heigvd.amt.model;
 
 import java.sql.Date;
+import javax.persistence.Embeddable;
 
 /**
  *
  * @author bischof
  */
+@Embeddable
 public class FactKey {
     
     
     private final String factType;
     private final String sensType;
     private final Date date;
+    
+    public FactKey(){
+        factType = "";
+        sensType = "";
+        date =  new Date(System.currentTimeMillis());
+    }
     
     public FactKey(String factType, String sensType, Date date) {
         this.factType = factType;

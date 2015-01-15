@@ -288,12 +288,12 @@ public class ServiceOrganization {
 //        factDAO.create(fact);
 //        return Response.status(201).entity("CREATED").build();
 //    }
-    @GET // OK
-    @Path("/{orgId}/facts/{factId}")
-    @Produces("application/json")
-    public FactDTO getOrganizationFactById(@PathParam("orgId") String orgId, @PathParam("factId") String factId) {
-        return convertFactsToFactsDTO(factDAO.findByOrg(Long.parseLong(orgId), Long.parseLong(factId))).get(0);
-    }
+//    @GET // OK
+//    @Path("/{orgId}/facts/{factId}")
+//    @Produces("application/json")
+//    public FactDTO getOrganizationFactById(@PathParam("orgId") String orgId, @PathParam("factId") String factId) {
+//        return convertFactsToFactsDTO(factDAO.findByOrg(Long.parseLong(orgId), Long.parseLong(factId))).get(0);
+//    }
 
 //    @GET // OK
 //    @Path("/{orgId}/facts/filter/type/{type}")

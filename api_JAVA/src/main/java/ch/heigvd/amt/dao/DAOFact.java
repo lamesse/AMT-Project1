@@ -63,14 +63,15 @@ public class DAOFact implements DAOFactLocal {
     
     @Override
     public List<Fact> findByOrg(Long orgId) {
-        return findByOrg(orgId, null);
-    }
-    
-    @Override
-    public List<Fact> findByOrg(Long orgId, Long factId) {
-        List<Fact> ret = em.createNamedQuery("find_fact_by_org_id").setParameter("orgId", orgId).setParameter("id", factId).getResultList();
+        List<Fact> ret = em.createNamedQuery("find_fact_by_org_id").setParameter("orgId", orgId).getResultList();
         return ret;
     }
+    
+//    @Override
+//    public List<Fact> findByOrg(Long orgId, Long factId) {
+//        List<Fact> ret = em.createNamedQuery("find_fact_by_org_id").setParameter("orgId", orgId).setParameter("id", factId).getResultList();
+//        return ret;
+//    }
     
     @Override
     public List<Fact> findByOrgAndType(Long orgId, String type) {
@@ -96,11 +97,11 @@ public class DAOFact implements DAOFactLocal {
         return ret;
     }
     
-    @Override
-    public List<Fact> findPublicById(Long factId) {
-        List<Fact> ret = em.createNamedQuery("find_fact_public_by_id").setParameter("id", factId).getResultList();
-        return ret;
-    }
+//    @Override
+//    public List<Fact> findPublicById(Long factId) {
+//        List<Fact> ret = em.createNamedQuery("find_fact_public_by_id").setParameter("id", factId).getResultList();
+//        return ret;
+//    }
     
     @Override
     public List<Fact> findPublicByType(String type) {

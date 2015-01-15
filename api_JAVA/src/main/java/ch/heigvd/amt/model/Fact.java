@@ -36,7 +36,7 @@ import javax.persistence.Table;
 @Entity
 @NamedQueries({
     @NamedQuery(
-            name = "find_fact_by_org_id", query = "SELECT f FROM Fact f WHERE (f.org.id = :orgId AND (:id IS NULL OR f.id = :id))"
+            name = "find_fact_by_org_id", query = "SELECT f FROM Fact f WHERE (f.org.id = :orgId)"
     ),
     @NamedQuery(
             name = "find_fact_by_org_id_and_type", query = "SELECT f FROM Fact f WHERE (f.org.id = :orgId AND f.type = :type)"
@@ -50,9 +50,9 @@ import javax.persistence.Table;
     @NamedQuery(
             name = "find_fact_public", query = "SELECT f FROM Fact f WHERE f.isPublic = true"
     ),
-    @NamedQuery(
-            name = "find_fact_public_by_id", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.id = :id)"
-    ),
+//    @NamedQuery(
+//            name = "find_fact_public_by_id", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.id = :id)"
+//    ),
     @NamedQuery(
             name = "find_fact_public_by_type", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.type = :type)"
     ),
@@ -67,9 +67,9 @@ import javax.persistence.Table;
 public class Fact implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+//    private Long id;
     @EmbeddedId
     private FactKey key;
     private String type;
@@ -102,13 +102,13 @@ public class Fact implements Serializable {
         this.org = org;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public FactKey getKey() {
         return key;
