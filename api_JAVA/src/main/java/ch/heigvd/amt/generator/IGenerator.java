@@ -14,4 +14,6 @@ import javax.ejb.Local;
 @Local
 public interface IGenerator {
     public void generate();
+    
+    public void generateTest();
 }

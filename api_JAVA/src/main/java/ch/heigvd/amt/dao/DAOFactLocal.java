@@ -22,6 +22,7 @@
 package ch.heigvd.amt.dao;
 
 import ch.heigvd.amt.model.Fact;
+import ch.heigvd.amt.model.FactKey;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -55,4 +56,7 @@ public interface DAOFactLocal {
     public abstract List<Fact> findPublicByOrganization(Long orgId);
     
     public abstract List<Fact> findPublicByTypeAndOrganization(String type, Long orgId);
+    
+    public abstract Fact findByIdForUpdate(FactKey key);
+    
 }

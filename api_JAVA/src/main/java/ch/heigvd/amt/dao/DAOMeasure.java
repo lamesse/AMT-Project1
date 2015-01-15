@@ -21,8 +21,13 @@
  */
 package ch.heigvd.amt.dao;
 
+import ch.heigvd.amt.model.Fact;
+import ch.heigvd.amt.model.FactKey;
 import ch.heigvd.amt.model.Measure;
+import ch.heigvd.amt.model.Sensor;
+import java.sql.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -33,11 +38,53 @@ public class DAOMeasure implements DAOMeasureLocal {
     @PersistenceContext
     EntityManager em;
 
+    @EJB
+    DAOFactLocal daoFact;
+
     @Override
-    public boolean create(Measure t) {
-        em.persist(t);
+    public boolean create(Measure m) {
+        em.persist(m);
         em.flush();
+        updateDailyFact(m);
         return true;
+    }
+
+    private void updateDailyFact(Measure m) {
+        FactKey key = new FactKey("daily", m.getSensor().getType(), new Date(System.currentTimeMillis()));
+        Fact fact = daoFact.findByIdForUpdate(key);
+        double min, max, avg, counter;
+        if (fact == null) {
+            Sensor s = m.getSensor();
+            fact = new Fact(key, s.isIsPublic(), s.getOrg());
+            max = m.getValue();
+            avg = m.getValue();
+            min = m.getValue();
+            counter = 1;
+        } else {
+            max = fact.getMax();
+            min = fact.getMin();
+            avg = fact.getAvg();
+            counter = fact.getAvgCounter();
+            double value = m.getValue();
+            if (min > value) {
+                min = value;
+            }
+
+            if (max < value) {
+                max = value;
+            }
+            avg = ((avg * counter) + value) / ++counter;
+        }
+        fact.setAvg(avg);
+        fact.setMin(min);
+        fact.setMax(max);
+        fact.setAvgCounter(counter);
+
+        updateWeeklyFact(m);
+    }
+
+    private void updateWeeklyFact(Measure m) {
+
     }
 
     @Override

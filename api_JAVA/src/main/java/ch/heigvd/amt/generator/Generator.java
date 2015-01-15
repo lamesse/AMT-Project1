@@ -30,7 +30,7 @@ import javax.ejb.Stateless;
  */
 @Stateless
 public class Generator implements IGenerator {
-    
+
     @EJB
     DAOOrganizationLocal orgManager;
     @EJB
@@ -41,23 +41,65 @@ public class Generator implements IGenerator {
     DAOMeasureLocal measManager;
     @EJB
     DAOFactLocal factManager;
-    
+
     private final Random r = new Random();
 
     // Constants
     private final static String[] organizations = {"HEIG-VD", "HES-SO", "EPFL"};
+
     private final static String[] maleFirstNames = {"butters", "stan", "kenny", "eric", "homer", "kyle"};
     private final static String[] femaleFirstNames = {"julie", "sarah", "marge", "delphine", "celine", "chloe"};
     private final static String[] lastNames = {"smith", "haineken", "samsung", "doe", "simpson", "marsh", "mccormick", "cartman", "broflovski", "stotch"};
     private final static String[] sensorsType = {"Alarm sensor", "Barometer", "Biosensor", "Calorimeter",
         "Pressure sensor", "Proximity sensor", "Quantum sensor", "Rain sensor", "Sonar", "Speed sensor", "Thermometer"};
-    
+
     private final static int NUMBER_OF_USERS_PER_ORGANIZATION = 10;
     private final static int NUMBER_OF_SENSORS_PER_ORGANIZATION = 200;
     private final static int NUMBER_OF_MEASURES_PER_SENSORS = 10;
     private final static int NUMBER_OF_MEASURES_PER_FACTS = 100;
-    
+
     private final static Map<Sensor, List<Measure>> sensorMeasures = new HashMap<>();
+    
+    /**********************************************************************************************/
+    /**********************************************************************************************/
+    /**********************************************************************************************/
+    // Test
+    private final static String organization = "HEIG-VD";
+    private final static String description = "Engineering School";
+    private final static String firstName = "Eduardo";
+    private final static String lastName = "Sanchez";
+    private final static String password = "toto";
+    private final static String email = firstName + "." + lastName + "@" + organization.toLowerCase() + ".ch";
+    private final static String[] sensorType = {"Quantum sensor", "Speed sensor"};
+    private final static int NUMBER_OF_SENSORS_PER_TYPE = 10;
+
+    @Override
+    public void generateTest() {
+        // Creating organization
+        Organization o = new Organization(organization, description);
+        orgManager.create(o);
+        // Creating contact user
+        User u = new User(firstName, lastName, email, o, password);
+        userManager.create(u);
+        // Updating contact user
+        o.setContact(u);
+        orgManager.update(o);
+        // Creating sensors
+        for (String sensType : sensorType) {
+            for (int i = 0; i < NUMBER_OF_SENSORS_PER_TYPE; ++i) {
+                Sensor s = new Sensor();
+                s.setName(sensType + " #" + r.nextInt(99999));
+                s.setType(sensType);
+                s.setDescription("");
+                s.setIsPublic(true);
+                s.setOrganization(o);
+                sensManager.create(s);
+            }
+        }
+    }
+    /**********************************************************************************************/
+    /**********************************************************************************************/
+    /**********************************************************************************************/
     
     @Override
     public void generate() {
@@ -126,8 +168,8 @@ public class Generator implements IGenerator {
                         if (counter == NUMBER_OF_MEASURES_PER_FACTS || counter == measures.size()) {
                             averageValue /= counter;
                             String description = "minValue : " + minValue + ", averageValue : " + averageValue + ", maxValue : " + maxValue;
-                            Fact f = new Fact(type, description, sensor.isIsPublic(), o);
-                            factManager.create(f);
+//                            Fact f = new Fact(type, sensor.getType(), description, sensor.isIsPublic(), o);
+//                            factManager.create(f);
                             minValue = 0;
                             maxValue = 0;
                             averageValue = 0;
@@ -138,7 +180,7 @@ public class Generator implements IGenerator {
             }
         }
     }
-    
+
     private Sensor generateSensor() {
         Sensor s = new Sensor();
         int i = r.nextInt(sensorsType.length);

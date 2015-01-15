@@ -22,6 +22,8 @@
 package ch.heigvd.amt.model;
 
 import java.io.Serializable;
+import java.sql.Date;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -68,8 +70,14 @@ public class Fact implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @EmbeddedId
+    private FactKey key;
     private String type;
-    private String description;
+    private String sensorType;
+    private double minimum;
+    private double average;
+    private double maximum;
+    private double avgCounter;
     private boolean isPublic;
 
     @ManyToOne
@@ -77,10 +85,19 @@ public class Fact implements Serializable {
 
     public Fact() {
     }
+    
+    public Fact(FactKey key, boolean isPublic, Organization org) {
+        this.key = key;
+        type = key.getFactType();
+        sensorType = key.getSensType();
+        this.isPublic = isPublic;
+        this.org = org;
+    }
 
-    public Fact(String type, String description, boolean isPublic, Organization org) {
+    public Fact(String type, String sensorType, String description, boolean isPublic, Organization org) {
+        key = new FactKey(type, sensorType, new Date(System.currentTimeMillis()));
         this.type = type;
-        this.description = description;
+        this.sensorType = sensorType;
         this.isPublic = isPublic;
         this.org = org;
     }
@@ -93,6 +110,15 @@ public class Fact implements Serializable {
         this.id = id;
     }
 
+    public FactKey getKey() {
+        return key;
+    }
+
+    public void setKey(FactKey key) {
+        this.key = key;
+    }
+
+
     public String getType() {
         return type;
     }
@@ -101,14 +127,48 @@ public class Fact implements Serializable {
         this.type = type;
     }
 
-    public String getDescription() {
-        return description;
+    public String getSensorType() {
+        return sensorType;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSensorType(String sensorType) {
+        this.sensorType = sensorType;
     }
 
+    public double getMin() {
+        return minimum;
+    }
+
+    public void setMin(double min) {
+        this.minimum = min;
+    }
+
+    public double getAvg() {
+        return average;
+    }
+
+    public void setAvg(double avg) {
+        this.average = avg;
+    }
+
+    public double getMax() {
+        return maximum;
+    }
+
+    public void setMax(double max) {
+        this.maximum = max;
+    }
+
+    public double getAvgCounter() {
+        return avgCounter;
+    }
+
+    public void setAvgCounter(double avgCounter) {
+        this.avgCounter = avgCounter;
+    }
+    
+    
+    
     public boolean isIsPublic() {
         return isPublic;
     }
@@ -124,27 +184,4 @@ public class Fact implements Serializable {
     public void setOrg(Organization org) {
         this.org = org;
     }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Fact)) {
-            return false;
-        }
-        Fact other = (Fact) object;
-        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
-    }
-
-    @Override
-    public String toString() {
-        return "ch.heigvd.amt.model.Fact[ id=" + id + " ]";
-    }
-
 }

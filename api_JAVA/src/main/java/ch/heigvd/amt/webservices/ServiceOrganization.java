@@ -38,6 +38,7 @@ import ch.heigvd.amt.model.Sensor;
 import ch.heigvd.amt.model.User;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -362,10 +363,8 @@ public class ServiceOrganization {
         List<FactDTO> result = new LinkedList<>();
         for (Fact f : list) {
             FactDTO dto = new FactDTO();
-            dto.setType(f.getType());
-            dto.setDescription(f.getDescription());
             dto.setIsPublic(f.isIsPublic());
-            dto.setId(f.getId());
+            dto.setKey(f.getKey());
             result.add(dto);
         }
         return result;

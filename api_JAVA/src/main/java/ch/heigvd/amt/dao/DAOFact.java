@@ -22,9 +22,11 @@
 package ch.heigvd.amt.dao;
 
 import ch.heigvd.amt.model.Fact;
+import ch.heigvd.amt.model.FactKey;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 
 @Stateless
@@ -116,5 +118,10 @@ public class DAOFact implements DAOFactLocal {
     public List<Fact> findPublicByTypeAndOrganization(String type, Long orgId) {
         List<Fact> ret = em.createNamedQuery("find_fact_public_by_type_and_organization").setParameter("type", type).setParameter("orgId", orgId).getResultList();
         return ret;
+    }
+
+    @Override
+    public Fact findByIdForUpdate(FactKey key) {
+        return em.find(Fact.class, key, LockModeType.PESSIMISTIC_WRITE);
     }
 }

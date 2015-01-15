@@ -91,9 +91,7 @@ public class ServiceFact {
         List<FactPublicDTO> result = new LinkedList<>();
         for (Fact f : list) {
             FactPublicDTO dto = new FactPublicDTO();
-            dto.setType(f.getType());
-            dto.setDescription(f.getDescription());
-            dto.setId(f.getId());
+            dto.setKey(f.getKey());
             result.add(dto);
         }
         return result;

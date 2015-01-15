@@ -21,18 +21,20 @@
  */
 package ch.heigvd.amt.dto;
 
+import ch.heigvd.amt.model.FactKey;
+
 public class FactPublicDTO {
 
-    private Long id;
+    private FactKey key;
     private String type;
     private String description;
 
-    public Long getId() {
-        return id;
+    public FactKey getKey() {
+        return key;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setKey(FactKey key) {
+        this.key = key;
     }
 
     public String getType() {

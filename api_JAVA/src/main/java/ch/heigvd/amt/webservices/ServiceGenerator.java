@@ -37,8 +37,9 @@ public class ServiceGenerator {
     
     @GET
     public Response getFacts() {
-        generator.generate();
-        return Response.status(200).entity("Generating data...").build();
+//        generator.generate();
+        generator.generateTest();
+        return Response.status(200).entity("Generating test data...").build();
     }
     
 }
