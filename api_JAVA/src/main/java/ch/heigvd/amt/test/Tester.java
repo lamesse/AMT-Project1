@@ -41,6 +41,8 @@ public class Tester {
     private static final String KEY_VALUE = "value";
     private static final String KEY_TIMESTAMP = "timestamp";
     private static final Map<Integer, String> sensorType = new HashMap<>();
+    
+    private static final Long ts = System.currentTimeMillis();
 
     static {
         for (int i = FIRST_SENSOR_ID; i < NUMBER_OF_THREAD + FIRST_SENSOR_ID; ++i) {
@@ -74,7 +76,7 @@ public class Tester {
                 JSONObject json = new JSONObject();
                 json.put(KEY_TYPE, sensorType.get(sensorId));
                 json.put(KEY_VALUE, RAND.nextInt(MAX_RANGE));
-                json.put(KEY_TIMESTAMP, System.currentTimeMillis() - (RAND.nextInt(7) * ONE_DAY));
+                json.put(KEY_TIMESTAMP, ts - (RAND.nextInt(7) * ONE_DAY));
                 target.request().post(Entity.json(json.toString()));
                 buffer.put(json);
             }
@@ -118,15 +120,17 @@ public class Tester {
                     }
                     list.add(json.getInt(KEY_VALUE));
                     tmp.put(json.getLong(KEY_TIMESTAMP), list);
-                    map.put(KEY_TYPE, tmp);
+                    map.put(json.getString(KEY_TYPE), tmp);
                 } catch (InterruptedException e) {
 
                 }
                 ++i;
             }
             Set<String> keys = map.keySet();
+            System.out.println("key : " + keys.size());
             for (String s : keys) {
                 Set<Long> timeKeys = map.get(s).keySet();
+                System.out.println("Timekey : " + timeKeys.size());
                 for (Long ts : timeKeys) {
                     int min = 0;
                     int avg = 0;
