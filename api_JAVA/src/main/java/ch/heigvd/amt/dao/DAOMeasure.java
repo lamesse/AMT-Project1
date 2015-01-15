@@ -50,7 +50,7 @@ public class DAOMeasure implements DAOMeasureLocal {
     }
 
     private void updateDailyFact(Measure m) {
-        FactKey key = new FactKey("daily", m.getSensor().getType(), new Date(System.currentTimeMillis()));
+        FactKey key = new FactKey("daily", m.getSensor().getType(), new Date(m.getTimestamp()));
         Fact fact = daoFact.findByIdForUpdate(key);
         double min, max, avg, counter;
         if (fact == null) {
