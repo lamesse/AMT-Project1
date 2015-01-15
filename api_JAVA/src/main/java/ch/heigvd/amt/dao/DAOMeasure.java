@@ -79,6 +79,9 @@ public class DAOMeasure implements DAOMeasureLocal {
         fact.setMin(min);
         fact.setMax(max);
         fact.setAvgCounter(counter);
+        
+        em.persist(fact);
+        em.flush();
 
         updateWeeklyFact(m);
     }

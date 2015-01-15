@@ -39,13 +39,13 @@ import javax.persistence.Table;
             name = "find_fact_by_org_id", query = "SELECT f FROM Fact f WHERE (f.org.id = :orgId)"
     ),
     @NamedQuery(
-            name = "find_fact_by_org_id_and_type", query = "SELECT f FROM Fact f WHERE (f.org.id = :orgId AND f.type = :type)"
+            name = "find_fact_by_org_id_and_type", query = "SELECT f FROM Fact f WHERE (f.org.id = :orgId AND f.key.factType = :type)"
     ),
     @NamedQuery(
             name = "find_fact_by_org_id_and_public", query = "SELECT f FROM Fact f WHERE (f.org.id = :orgId AND f.isPublic = :isPublic)"
     ),
     @NamedQuery(
-            name = "find_fact_by_org_id_type_and_public", query = "SELECT f FROM Fact f WHERE (f.org.id = :orgId AND f.type = :type AND f.isPublic = :isPublic)"
+            name = "find_fact_by_org_id_type_and_public", query = "SELECT f FROM Fact f WHERE (f.org.id = :orgId AND f.key.factType = :type AND f.isPublic = :isPublic)"
     ),
     @NamedQuery(
             name = "find_fact_public", query = "SELECT f FROM Fact f WHERE f.isPublic = true"
@@ -54,13 +54,13 @@ import javax.persistence.Table;
 //            name = "find_fact_public_by_id", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.id = :id)"
 //    ),
     @NamedQuery(
-            name = "find_fact_public_by_type", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.type = :type)"
+            name = "find_fact_public_by_type", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.key.factType = :type)"
     ),
     @NamedQuery(
             name = "find_fact_public_by_organization", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.org.id = :orgId)"
     ),
     @NamedQuery(
-            name = "find_fact_public_by_type_and_organization", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.type = :type AND f.org.id = :orgId)"
+            name = "find_fact_public_by_type_and_organization", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.key.factType = :type AND f.org.id = :orgId)"
     )
 })
 @Table(name = "fact")
@@ -72,8 +72,6 @@ public class Fact implements Serializable {
 //    private Long id;
     @EmbeddedId
     private FactKey key;
-    private String type;
-    private String sensorType;
     private double minimum;
     private double average;
     private double maximum;
@@ -85,19 +83,15 @@ public class Fact implements Serializable {
 
     public Fact() {
     }
-    
+
     public Fact(FactKey key, boolean isPublic, Organization org) {
         this.key = key;
-        type = key.getFactType();
-        sensorType = key.getSensType();
         this.isPublic = isPublic;
         this.org = org;
     }
 
     public Fact(String type, String sensorType, String description, boolean isPublic, Organization org) {
         key = new FactKey(type, sensorType, new Date(System.currentTimeMillis()));
-        this.type = type;
-        this.sensorType = sensorType;
         this.isPublic = isPublic;
         this.org = org;
     }
@@ -109,7 +103,6 @@ public class Fact implements Serializable {
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
-
     public FactKey getKey() {
         return key;
     }
@@ -118,21 +111,28 @@ public class Fact implements Serializable {
         this.key = key;
     }
 
-
     public String getType() {
-        return type;
+        return key.getFactType();
     }
 
     public void setType(String type) {
-        this.type = type;
+        key.setFactType(type);
     }
 
     public String getSensorType() {
-        return sensorType;
+        return key.getSensType();
     }
 
     public void setSensorType(String sensorType) {
-        this.sensorType = sensorType;
+        key.setSensType(sensorType);
+    }
+
+    public Date getDate() {
+        return key.getDate();
+    }
+
+    public void setDate(Date date) {
+        key.setDate(date);
     }
 
     public double getMin() {
@@ -166,9 +166,7 @@ public class Fact implements Serializable {
     public void setAvgCounter(double avgCounter) {
         this.avgCounter = avgCounter;
     }
-    
-    
-    
+
     public boolean isIsPublic() {
         return isPublic;
     }

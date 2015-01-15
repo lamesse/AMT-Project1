@@ -6,6 +6,7 @@
 package ch.heigvd.amt.model;
 
 import java.sql.Date;
+import java.util.logging.Logger;
 import javax.persistence.Embeddable;
 
 /**
@@ -16,9 +17,9 @@ import javax.persistence.Embeddable;
 public class FactKey {
     
     
-    private final String factType;
-    private final String sensType;
-    private final Date date;
+    private String factType;
+    private String sensType;
+    private Date date;
     
     public FactKey(){
         factType = "";
@@ -43,4 +44,17 @@ public class FactKey {
     public Date getDate() {
         return date;
     }
+    
+    public void setFactType(String factType) {
+        this.factType = factType;
+    }
+
+    public void setSensType(String sensType) {
+        this.sensType = sensType;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+    
 }

@@ -26,18 +26,9 @@ public class Tester {
     public void test() {
 
         Client client = ClientBuilder.newClient().register(JacksonFeature.class);
-        final WebTarget sensorsTarget = client.target("http://localhost:8080/api_JAVA/api").path("sensors");
-        final WebTarget factTarget = client.target("http://localhost:8080/api_JAVA/api").path("facts");
+        final WebTarget target = client.target("http://localhost:8080/api_JAVA/api").path("organizations/1/sensors/3/measures");
+
         
-        
-        Response response = sensorsTarget.request().get();
-        LinkedList<Sensor> sensors = response.readEntity(LinkedList.class);
-        
-        for(Sensor s : sensors) {
-            System.out.println("Sensor : " + s.getName());
-        }
-        
-        // Response response = target.request().post(Entity.json(new TransactionDTO(accountId, 1)));
 
     }
 
