@@ -5,6 +5,7 @@
  */
 package ch.heigvd.amt.test;
 
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.logging.Logger;
@@ -64,18 +65,17 @@ public class Tester {
 
     private class Buffer<E> {
 
-        private LinkedList<E> list = new LinkedList<>();
+        private final LinkedList<E> list = new LinkedList<>();
 
         public synchronized void put(E e) {
             list.addLast(e);
-            notify();
+            notifyAll();
         }
 
         public synchronized E get() throws InterruptedException {
             while (list.isEmpty()) {
                 wait();
             }
-            notify();
             return list.removeFirst();
         }
     }
@@ -87,7 +87,8 @@ public class Tester {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     JSONObject json = buffer.get();
-                    System.out.println(json.toString());
+                    System.out.print(json.toString());
+                    System.out.println("\t" + new Date(json.getLong("timestamp")));
                 } catch (InterruptedException e) {
 
                 }
