@@ -42,7 +42,7 @@ public class Tester {
     private static final String KEY_TIMESTAMP = "timestamp";
     private static final Map<Integer, String> sensorType = new HashMap<>();
 
-    {
+    static {
         for (int i = FIRST_SENSOR_ID; i < NUMBER_OF_THREAD + FIRST_SENSOR_ID; ++i) {
             sensorType.put(i, Generator.sensorType[(i - FIRST_SENSOR_ID) / Generator.NUMBER_OF_SENSORS_PER_TYPE]);
         }
@@ -100,7 +100,7 @@ public class Tester {
 
     private class Worker extends Thread {
 
-        private final Map<String, Map<String, LinkedList<Integer>>> map = new HashMap<>();
+        private final Map<String, Map<Long, LinkedList<Integer>>> map = new HashMap<>();
 
         @Override
         public void run() {
@@ -108,16 +108,16 @@ public class Tester {
             while (i < NUMBER_OF_THREAD * NUMBER_OF_MEASURES) {
                 try {
                     JSONObject json = buffer.get();
-                    Map<String, LinkedList<Integer>> tmp = map.get(json.getString(KEY_TYPE));
+                    Map<Long, LinkedList<Integer>> tmp = map.get(json.getString(KEY_TYPE));
                     if (tmp == null) {
                         tmp = new HashMap<>();
                     }
-                    LinkedList<Integer> list = tmp.get(json.getString(KEY_TIMESTAMP));
+                    LinkedList<Integer> list = tmp.get(json.getLong(KEY_TIMESTAMP));
                     if (list == null) {
                         list = new LinkedList<>();
                     }
                     list.add(json.getInt(KEY_VALUE));
-                    tmp.put(KEY_TIMESTAMP, list);
+                    tmp.put(json.getLong(KEY_TIMESTAMP), list);
                     map.put(KEY_TYPE, tmp);
                 } catch (InterruptedException e) {
 
@@ -126,8 +126,8 @@ public class Tester {
             }
             Set<String> keys = map.keySet();
             for (String s : keys) {
-                Set<String> timeKeys = map.get(s).keySet();
-                for (String ts : timeKeys) {
+                Set<Long> timeKeys = map.get(s).keySet();
+                for (Long ts : timeKeys) {
                     int min = 0;
                     int avg = 0;
                     int max = 0;
@@ -148,8 +148,8 @@ public class Tester {
         }
     }
     
-    private void prettyPrint(String timestamp, int min, int max, int avg, int counter) {
-        System.out.print(new Date(Long.parseLong(timestamp)) + " : { min : " + min + ", ");
+    private void prettyPrint(Long timestamp, int min, int max, int avg, int counter) {
+        System.out.print(new Date(timestamp) + " : { min : " + min + ", ");
         System.out.print( "max : " + max + ", avg : " + (avg / counter) + ", counter : " + counter + " }");
         System.out.println("\n");
     }
