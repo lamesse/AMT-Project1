@@ -5,6 +5,7 @@
  */
 package ch.heigvd.amt.test;
 
+import ch.heigvd.amt.generator.Generator;
 import java.sql.Date;
 import java.util.LinkedList;
 import java.util.Random;
@@ -27,10 +28,11 @@ public class Tester {
     private static final String LOCALHOST = "http://localhost:8080/api_JAVA/api";
     private static final String PATH = "organizations/1/sensors/";
     private static final String MEASURE = "/measures";
-    private static final int NUMBER_OF_THREAD = 5;
-    private static final int NUMBER_OF_MEASURES = 20;
+    private static final int NUMBER_OF_THREAD = Generator.NUMBER_OF_SENSORS_PER_TYPE * 2;
+    private static final int NUMBER_OF_MEASURES = 100;
     private static final Random RAND = new Random();
     private static final long ONE_DAY = 86400000; // ms
+    private static final int MAX_RANGE = 1000;
 
     private final Buffer<JSONObject> buffer = new Buffer<>();
 
@@ -55,7 +57,7 @@ public class Tester {
         public void run() {
             for (int i = 0; i < NUMBER_OF_MEASURES; ++i) {
                 JSONObject json = new JSONObject();
-                json.put("value", RAND.nextInt(1000));
+                json.put("value", RAND.nextInt(MAX_RANGE));
                 json.put("timestamp", System.currentTimeMillis() - (RAND.nextInt(7) * ONE_DAY));
                 target.request().post(Entity.json(json.toString()));
                 buffer.put(json);
