@@ -5,15 +5,15 @@
  */
 package ch.heigvd.amt.test;
 
-import ch.heigvd.amt.model.Sensor;
 import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Random;
+import java.util.logging.Logger;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.json.JSONObject;
 
 /**
  *
@@ -21,15 +21,78 @@ import org.glassfish.jersey.jackson.JacksonFeature;
  */
 public class Tester {
 
-    ExecutorService executor = Executors.newFixedThreadPool(10);
+    private static final Logger LOG = Logger.getLogger(Tester.class.getName());
+
+    private static final String LOCALHOST = "http://localhost:8080/api_JAVA/api";
+    private static final String PATH = "organizations/1/sensors/";
+    private static final String MEASURE = "/measures";
+    private static final int NUMBER_OF_THREAD = 5;
+    private static final int NUMBER_OF_MEASURES = 20;
+    private static final Random RAND = new Random();
+    private static final long ONE_DAY = 86400000; // ms
+
+    private final Buffer<JSONObject> buffer = new Buffer<>();
 
     public void test() {
+        new Worker().start();
+        for (int i = 0; i < NUMBER_OF_THREAD; ++i) {
+            new TestWorker(PATH + (i + 3) + MEASURE).start();
+        }
 
-        Client client = ClientBuilder.newClient().register(JacksonFeature.class);
-        final WebTarget target = client.target("http://localhost:8080/api_JAVA/api").path("organizations/1/sensors/3/measures");
+    }
 
-        
+    private class TestWorker extends Thread {
 
+        private final Client client = ClientBuilder.newClient().register(JacksonFeature.class);
+        private final WebTarget target;
+
+        private TestWorker(final String path) {
+            target = client.target(LOCALHOST).path(path);
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < NUMBER_OF_MEASURES; ++i) {
+                JSONObject json = new JSONObject();
+                json.put("value", RAND.nextInt(1000));
+                json.put("timestamp", System.currentTimeMillis() - (RAND.nextInt(7) * ONE_DAY));
+                target.request().post(Entity.json(json.toString()));
+                buffer.put(json);
+            }
+        }
+    }
+
+    private class Buffer<E> {
+
+        private LinkedList<E> list = new LinkedList<>();
+
+        public synchronized void put(E e) {
+            list.addLast(e);
+            notify();
+        }
+
+        public synchronized E get() throws InterruptedException {
+            while (list.isEmpty()) {
+                wait();
+            }
+            notify();
+            return list.removeFirst();
+        }
+    }
+
+    private class Worker extends Thread {
+
+        @Override
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    JSONObject json = buffer.get();
+                    System.out.println(json.toString());
+                } catch (InterruptedException e) {
+
+                }
+            }
+        }
     }
 
     public static void main(String[] args) {
