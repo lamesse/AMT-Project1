@@ -28,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 @Stateless
 public class DAOFact implements DAOFactLocal {
@@ -36,89 +37,80 @@ public class DAOFact implements DAOFactLocal {
     EntityManager em;
     
     @Override
-    public boolean create(Fact t) {
-        em.persist(t);
+    public boolean create(Fact f) {
+        em.persist(f);
         em.flush();
         return true;
     }
     
     @Override
-    public boolean update(Fact t) {
-        em.merge(t);
+    public boolean update(Fact f) {
+        em.merge(f);
         em.flush();
         return true;
     }
     
     @Override
-    public boolean delete(Fact t) {
-        em.remove(t);
+    public boolean delete(Fact f) {
+        em.remove(f);
         em.flush();
         return true;
-    }
-    
-    @Override
-    public Fact find(Long id) {
-        return em.find(Fact.class, id);
     }
     
     @Override
     public List<Fact> findByOrg(Long orgId) {
-        List<Fact> ret = em.createNamedQuery("find_fact_by_org_id").setParameter("orgId", orgId).getResultList();
-        return ret;
+        TypedQuery<Fact> q = em.createNamedQuery("find_fact_by_org_id", Fact.class).setParameter("orgId", orgId);
+        q.setLockMode(LockModeType.PESSIMISTIC_READ);
+        return q.getResultList();
     }
-    
-//    @Override
-//    public List<Fact> findByOrg(Long orgId, Long factId) {
-//        List<Fact> ret = em.createNamedQuery("find_fact_by_org_id").setParameter("orgId", orgId).setParameter("id", factId).getResultList();
-//        return ret;
-//    }
     
     @Override
     public List<Fact> findByOrgAndType(Long orgId, String type) {
-        List<Fact> ret = em.createNamedQuery("find_fact_by_org_id_and_type").setParameter("orgId", orgId).setParameter("type", type).getResultList();
-        return ret;
+        TypedQuery<Fact> q = em.createNamedQuery("find_fact_by_org_id_and_type", Fact.class).setParameter("orgId", orgId).setParameter("type", type);
+        q.setLockMode(LockModeType.PESSIMISTIC_READ);
+        return q.getResultList();
     }
     
     @Override
     public List<Fact> findByOrgAndPublic(Long orgId, boolean isPublic) {
-        List<Fact> ret = em.createNamedQuery("find_fact_by_org_id_and_public").setParameter("orgId", orgId).setParameter("isPublic", isPublic).getResultList();
-        return ret;
+        TypedQuery<Fact> q = em.createNamedQuery("find_fact_by_org_id_and_public", Fact.class).setParameter("orgId", orgId).setParameter("isPublic", isPublic);
+        q.setLockMode(LockModeType.PESSIMISTIC_READ);
+        return q.getResultList();
     }
     
     @Override
     public List<Fact> findByOrgTypeAndPublic(Long orgId, String type, boolean isPublic) {
-        List<Fact> ret = em.createNamedQuery("find_fact_by_org_id_type_and_public").setParameter("orgId", orgId).setParameter("type", type).setParameter("isPublic", isPublic).getResultList();
-        return ret;
+        TypedQuery<Fact> q = em.createNamedQuery("find_fact_by_org_id_type_and_public", Fact.class).setParameter("orgId", orgId).setParameter("type", type).setParameter("isPublic", isPublic);
+        q.setLockMode(LockModeType.PESSIMISTIC_READ);
+        return q.getResultList();
     }
     
     @Override
     public List<Fact> findPublic() {
-        List<Fact> ret = em.createNamedQuery("find_fact_public").getResultList();
-        return ret;
+        TypedQuery<Fact> q = em.createNamedQuery("find_fact_public", Fact.class);
+        q.setLockMode(LockModeType.PESSIMISTIC_READ);
+        return q.getResultList();
     }
-    
-//    @Override
-//    public List<Fact> findPublicById(Long factId) {
-//        List<Fact> ret = em.createNamedQuery("find_fact_public_by_id").setParameter("id", factId).getResultList();
-//        return ret;
-//    }
     
     @Override
     public List<Fact> findPublicByType(String type) {
-        List<Fact> ret = em.createNamedQuery("find_fact_public_by_type").setParameter("type", type).getResultList();
-        return ret;
+        TypedQuery<Fact> q = em.createNamedQuery("find_fact_public_by_type", Fact.class).setParameter("type", type); 
+        q.setLockMode(LockModeType.PESSIMISTIC_READ);
+        return q.getResultList();
     }
     
     @Override
     public List<Fact> findPublicByOrganization(Long orgId) {
-        List<Fact> ret = em.createNamedQuery("find_fact_public_by_organization").setParameter("orgId", orgId).getResultList();
-        return ret;
+        TypedQuery<Fact> q = em.createNamedQuery("find_fact_public_by_organization", Fact.class).setParameter("orgId", orgId);
+        q.setLockMode(LockModeType.PESSIMISTIC_READ);
+        return q.getResultList();
     }
     
     @Override
     public List<Fact> findPublicByTypeAndOrganization(String type, Long orgId) {
-        List<Fact> ret = em.createNamedQuery("find_fact_public_by_type_and_organization").setParameter("type", type).setParameter("orgId", orgId).getResultList();
-        return ret;
+        TypedQuery<Fact> q = em.createNamedQuery("find_fact_public_by_type_and_organization", Fact.class).setParameter("type", type).setParameter("orgId", orgId);
+        q.setLockMode(LockModeType.PESSIMISTIC_READ);
+        return q.getResultList();
     }
 
     @Override

@@ -25,9 +25,6 @@ import java.io.Serializable;
 import java.sql.Date;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -50,9 +47,6 @@ import javax.persistence.Table;
     @NamedQuery(
             name = "find_fact_public", query = "SELECT f FROM Fact f WHERE f.isPublic = true"
     ),
-//    @NamedQuery(
-//            name = "find_fact_public_by_id", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.id = :id)"
-//    ),
     @NamedQuery(
             name = "find_fact_public_by_type", query = "SELECT f FROM Fact f WHERE (f.isPublic = true AND f.key.factType = :type)"
     ),
@@ -67,9 +61,6 @@ import javax.persistence.Table;
 public class Fact implements Serializable {
 
     private static final long serialVersionUID = 1L;
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    private Long id;
     @EmbeddedId
     private FactKey key;
     private double minimum;
@@ -96,13 +87,6 @@ public class Fact implements Serializable {
         this.org = org;
     }
 
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
     public FactKey getKey() {
         return key;
     }

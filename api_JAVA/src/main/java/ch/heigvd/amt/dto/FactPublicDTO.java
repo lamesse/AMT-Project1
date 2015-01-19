@@ -26,8 +26,9 @@ import ch.heigvd.amt.model.FactKey;
 public class FactPublicDTO {
 
     private FactKey key;
-    private String type;
-    private String description;
+    private String factType;
+    private String sensType;
+    private double average;
 
     public FactKey getKey() {
         return key;
@@ -37,19 +38,27 @@ public class FactPublicDTO {
         this.key = key;
     }
 
-    public String getType() {
-        return type;
+    public String getFactType() {
+        return factType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setFactType(String factType) {
+        this.factType = factType;
     }
 
-    public String getDescription() {
-        return description;
+    public String getSensType() {
+        return sensType;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSensType(String sensType) {
+        this.sensType = sensType;
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public void setAverage(double average) {
+        this.average = average;
     }
 }

@@ -38,7 +38,6 @@ import ch.heigvd.amt.model.Sensor;
 import ch.heigvd.amt.model.User;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -280,41 +279,6 @@ public class ServiceOrganization {
         }
     }
 
-//    @POST // OK
-//    @Path("/{orgId}/facts")
-//    @Consumes("application/json")
-//    public Response addOrganizationFact(Fact fact, @PathParam("orgId") String id) {
-//        fact.setOrg(organizationDAO.find(Long.parseLong(id)).get(0));
-//        factDAO.create(fact);
-//        return Response.status(201).entity("CREATED").build();
-//    }
-//    @GET // OK
-//    @Path("/{orgId}/facts/{factId}")
-//    @Produces("application/json")
-//    public FactDTO getOrganizationFactById(@PathParam("orgId") String orgId, @PathParam("factId") String factId) {
-//        return convertFactsToFactsDTO(factDAO.findByOrg(Long.parseLong(orgId), Long.parseLong(factId))).get(0);
-//    }
-
-//    @GET // OK
-//    @Path("/{orgId}/facts/filter/type/{type}")
-//    @Produces("application/json")
-//    public List<FactDTO> getFilteredFactsByType(@PathParam("orgId") String orgId, @PathParam("type") String type) {
-//        return convertFactsToFactsDTO(factDAO.findByOrgAndType(Long.parseLong(orgId), type));
-//    }
-//
-//    @GET // OK
-//    @Path("/{orgId}/facts/filter/public/{isPublic}")
-//    @Produces("application/json")
-//    public List<FactDTO> getFilteredFactsByPublic(@PathParam("orgId") String orgId, @PathParam("isPublic") String isPublic) {
-//        return convertFactsToFactsDTO(factDAO.findByOrgAndPublic(Long.parseLong(orgId), isPublic.equals("true")));
-//    }
-//
-//    @GET // OK
-//    @Path("/{orgId}/facts/filter/type/{type}/public/{isPublic}")
-//    @Produces("application/json")
-//    public List<FactDTO> getFilteredFactsByTypeAndPublic(@PathParam("orgId") String orgId, @PathParam("type") String type, @PathParam("isPublic") String isPublic) {
-//        return convertFactsToFactsDTO(factDAO.findByOrgTypeAndPublic(Long.parseLong(orgId), type, isPublic.equals("true")));
-//    }
     /*===============================================================================================================================*/
     /*===============================================================================================================================*/
     /*===============================================================================================================================*/
@@ -363,8 +327,13 @@ public class ServiceOrganization {
         List<FactDTO> result = new LinkedList<>();
         for (Fact f : list) {
             FactDTO dto = new FactDTO();
-            dto.setIsPublic(f.isIsPublic());
             dto.setKey(f.getKey());
+            dto.setFactType(f.getType());
+            dto.setSensType(f.getSensorType());
+            dto.setMinimum(f.getMin());
+            dto.setAverage(f.getAvg());
+            dto.setMaximum(f.getMax());
+            dto.setIsPublic(f.isIsPublic());
             result.add(dto);
         }
         return result;

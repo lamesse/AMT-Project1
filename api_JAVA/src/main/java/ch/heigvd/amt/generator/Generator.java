@@ -90,7 +90,7 @@ public class Generator implements IGenerator {
                 Sensor s = new Sensor();
                 s.setName(sensType + " #" + r.nextInt(99999));
                 s.setType(sensType);
-                s.setDescription("");
+                s.setDescription("Description of " + s.getName());
                 s.setIsPublic(true);
                 s.setOrganization(o);
                 sensManager.create(s);

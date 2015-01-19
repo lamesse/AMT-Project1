@@ -5,8 +5,8 @@
  */
 package ch.heigvd.amt.model;
 
+import java.io.Serializable;
 import java.sql.Date;
-import java.util.logging.Logger;
 import javax.persistence.Embeddable;
 
 /**
@@ -14,7 +14,7 @@ import javax.persistence.Embeddable;
  * @author bischof
  */
 @Embeddable
-public class FactKey {
+public class FactKey implements Serializable {
     
     
     private String factType;

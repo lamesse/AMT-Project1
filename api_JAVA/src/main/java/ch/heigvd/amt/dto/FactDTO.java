@@ -26,8 +26,11 @@ import ch.heigvd.amt.model.FactKey;
 public class FactDTO {
 
     private FactKey key;
-    private String type;
-    private String description;
+    private String factType;
+    private String sensType;
+    private double minimum;
+    private double average;
+    private double maximum;
     private boolean isPublic;
 
     public FactKey getKey() {
@@ -38,20 +41,44 @@ public class FactDTO {
         this.key = key;
     }
 
-    public String getType() {
-        return type;
+    public String getFactType() {
+        return factType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setFactType(String factType) {
+        this.factType = factType;
     }
 
-    public String getDescription() {
-        return description;
+    public String getSensType() {
+        return sensType;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSensType(String sensType) {
+        this.sensType = sensType;
+    }
+
+    public double getMinimum() {
+        return minimum;
+    }
+
+    public void setMinimum(double minimum) {
+        this.minimum = minimum;
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public void setAverage(double average) {
+        this.average = average;
+    }
+
+    public double getMaximum() {
+        return maximum;
+    }
+
+    public void setMaximum(double maximum) {
+        this.maximum = maximum;
     }
 
     public boolean isIsPublic() {
@@ -61,5 +88,4 @@ public class FactDTO {
     public void setIsPublic(boolean isPublic) {
         this.isPublic = isPublic;
     }
-    
 }

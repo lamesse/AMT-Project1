@@ -35,11 +35,7 @@ public interface DAOFactLocal {
 
     public abstract boolean delete(Fact t);
 
-    public abstract Fact find(Long id);
-    
     public abstract List<Fact> findByOrg(Long orgId);
-    
-//    public abstract List<Fact> findByOrg(Long orgId, Long factId);
     
     public abstract List<Fact> findByOrgAndType(Long orgId, String type);
     
@@ -48,8 +44,6 @@ public interface DAOFactLocal {
     public abstract List<Fact> findByOrgTypeAndPublic(Long orgId, String type, boolean isPublic);
     
     public abstract List<Fact> findPublic();
-    
-//    public abstract List<Fact> findPublicById(Long factId);
     
     public abstract List<Fact> findPublicByType(String type);
     
