@@ -83,11 +83,11 @@ public class DAOMeasure implements DAOMeasureLocal {
         em.persist(fact);
         em.flush();
 
-        updateWeeklyFact(m);
+        updateSensorCounterFact(m);
     }
 
-    private void updateWeeklyFact(Measure m) {
-
+    private void updateSensorCounterFact(Measure m) {
+        FactKey key = new FactKey("sensorCounter", m.getSensor().getType(), new Date(m.getTimestamp()));
     }
 
     @Override

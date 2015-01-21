@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @NamedQueries({
@@ -71,6 +72,9 @@ public class Fact implements Serializable {
 
     @ManyToOne
     private Organization org;
+    
+    @Version
+    int version;
 
     public Fact() {
     }

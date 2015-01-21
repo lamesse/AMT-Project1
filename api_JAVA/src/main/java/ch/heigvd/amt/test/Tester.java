@@ -12,11 +12,13 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.json.JSONObject;
 
@@ -40,6 +42,7 @@ public class Tester {
     private static final String KEY_TYPE = "sensorType";
     private static final String KEY_VALUE = "value";
     private static final String KEY_TIMESTAMP = "timestamp";
+    private static final String KEY_STATUS_CODE = "status";
     private static final Map<Integer, String> sensorType = new HashMap<>();
     
     private static final Long ts = System.currentTimeMillis();
@@ -77,7 +80,8 @@ public class Tester {
                 json.put(KEY_TYPE, sensorType.get(sensorId));
                 json.put(KEY_VALUE, RAND.nextInt(MAX_RANGE));
                 json.put(KEY_TIMESTAMP, ts - (RAND.nextInt(7) * ONE_DAY));
-                target.request().post(Entity.json(json.toString()));
+                Response r = target.request().post(Entity.json(json.toString()));
+                json.put(KEY_STATUS_CODE, r.getStatus());
                 buffer.put(json);
             }
         }
@@ -102,7 +106,7 @@ public class Tester {
 
     private class Worker extends Thread {
 
-        private final Map<String, Map<Long, LinkedList<Integer>>> map = new HashMap<>();
+        private final Map<String, Map<Long, LinkedList<JSONObject>>> map = new HashMap<>();
 
         @Override
         public void run() {
@@ -110,34 +114,33 @@ public class Tester {
             while (i < NUMBER_OF_THREAD * NUMBER_OF_MEASURES) {
                 try {
                     JSONObject json = buffer.get();
-                    Map<Long, LinkedList<Integer>> tmp = map.get(json.getString(KEY_TYPE));
+                    Map<Long, LinkedList<JSONObject>> tmp = map.get(json.getString(KEY_TYPE));
                     if (tmp == null) {
                         tmp = new HashMap<>();
                     }
-                    LinkedList<Integer> list = tmp.get(json.getLong(KEY_TIMESTAMP));
+                    LinkedList<JSONObject> list = tmp.get(json.getLong(KEY_TIMESTAMP));
                     if (list == null) {
                         list = new LinkedList<>();
                     }
-                    list.add(json.getInt(KEY_VALUE));
+                    list.add(json);
                     tmp.put(json.getLong(KEY_TIMESTAMP), list);
                     map.put(json.getString(KEY_TYPE), tmp);
                 } catch (InterruptedException e) {
-
+                    LOG.log(Level.SEVERE, e.getMessage());
                 }
                 ++i;
             }
             Set<String> keys = map.keySet();
-            System.out.println("key : " + keys.size());
             for (String s : keys) {
                 Set<Long> timeKeys = map.get(s).keySet();
-                System.out.println("Timekey : " + timeKeys.size());
                 for (Long ts : timeKeys) {
                     int min = 0;
                     int avg = 0;
                     int max = 0;
                     int counter = 0;
-                    for (Integer num : map.get(s).get(ts)) {
+                    for (JSONObject obj : map.get(s).get(ts)) {
                         ++counter;
+                        int num = obj.getInt(KEY_VALUE);
                         if (min > num) {
                             min = num;
                         }
@@ -145,6 +148,7 @@ public class Tester {
                             max = num;
                         }
                         avg += num;
+                        System.out.println("Status code : " + obj.getString(KEY_STATUS_CODE));
                     }
                     prettyPrint(ts, min, max, avg, counter);
                 }

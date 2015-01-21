@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @NamedQueries({
@@ -58,6 +59,9 @@ public class Measure implements Serializable {
 
     @ManyToOne
     private Sensor sensor;
+    
+    @Version
+    int version;
 
     public Measure() {
     }
