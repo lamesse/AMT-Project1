@@ -148,7 +148,7 @@ public class Tester {
                             max = num;
                         }
                         avg += num;
-                        System.out.println("Status code : " + obj.getString(KEY_STATUS_CODE));
+                        System.out.println("Status code : " + obj.getLong(KEY_STATUS_CODE));
                     }
                     prettyPrint(ts, min, max, avg, counter);
                 }
