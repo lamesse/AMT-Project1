@@ -29,6 +29,8 @@ import java.sql.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -42,10 +44,12 @@ public class DAOMeasure implements DAOMeasureLocal {
     DAOFactLocal daoFact;
 
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean create(Measure m) {
         em.persist(m);
         em.flush();
         updateDailyFact(m);
+        updateCounterFact(m);
         return true;
     }
 
@@ -79,14 +83,12 @@ public class DAOMeasure implements DAOMeasureLocal {
         fact.setMin(min);
         fact.setMax(max);
         fact.setAvgCounter(counter);
-        
+
         em.persist(fact);
         em.flush();
-
-        updateSensorCounterFact(m);
     }
 
-    private void updateSensorCounterFact(Measure m) {
+    private void updateCounterFact(Measure m) {
         FactKey key = new FactKey("sensorCounter", m.getSensor().getId().toString(), new Date(0));
         Fact fact = daoFact.findByIdForUpdate(key);
         double counter;

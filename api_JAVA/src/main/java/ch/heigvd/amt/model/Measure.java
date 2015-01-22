@@ -43,7 +43,7 @@ import javax.persistence.Version;
     @NamedQuery(
             name = "find_measure_by_sensor_id_and_organization_id", query = "SELECT m FROM Measure m WHERE (m.sensor.id = :sensorId AND m.sensor.org.id = :orgId)"
     ),
-     @NamedQuery(
+    @NamedQuery(
             name = "find_measure_by_sensor_id_and_organization_id_and_measure_id", query = "SELECT m FROM Measure m WHERE (m.sensor.id = :sensorId AND m.sensor.org.id = :orgId AND m.id = :measureId)"
     )
 })
@@ -59,7 +59,7 @@ public class Measure implements Serializable {
 
     @ManyToOne
     private Sensor sensor;
-    
+
     @Version
     int version;
 

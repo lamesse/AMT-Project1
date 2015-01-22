@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ch.heigvd.amt.test;
 
 import ch.heigvd.amt.generator.Generator;
@@ -24,7 +19,8 @@ import org.json.JSONObject;
 
 /**
  *
- * @author bischof
+ * @author Jonathan Bischof
+ * @author Antoine Messerli
  */
 public class Tester {
 
@@ -56,9 +52,10 @@ public class Tester {
 
     private final Buffer<JSONObject> bufferDaily = new Buffer<>();
     private final Buffer<JSONObject> bufferCounter = new Buffer<>();
+    private final WorkerDaily wd = new WorkerDaily();
 
     public void test() {
-        new WorkerDaily().start();
+        wd.start();
         new WorkerCounter().start();
         for (int i = FIRST_SENSOR_ID; i < NUMBER_OF_THREAD + FIRST_SENSOR_ID; ++i) {
             new TestWorker(i).start();
@@ -160,12 +157,12 @@ public class Tester {
                 }
             }
         }
+    }
 
-        private void prettyPrint(Long timestamp, int min, int max, int avg, int counter) {
-            System.out.print(new Date(timestamp) + " : { min : " + min + ", ");
-            System.out.print("max : " + max + ", avg : " + (avg / counter) + ", counter : " + counter + " }");
-            System.out.println("\n");
-        }
+    private synchronized void prettyPrint(Long timestamp, int min, int max, int avg, int counter) {
+        System.out.print(new Date(timestamp) + " : { min : " + min + ", ");
+        System.out.print("max : " + max + ", avg : " + (avg / counter) + ", counter : " + counter + " }");
+        System.out.println("\n");
     }
 
     private class WorkerCounter extends Thread {
@@ -192,14 +189,20 @@ public class Tester {
                 }
                 ++i;
             }
-            prettyPrint();
-        }
-
-        private void prettyPrint() {
-            Set<Integer> keys = map.keySet();
-            for (Integer i : keys) {
-                System.out.println("Sensor " + i + " has " + map.get(i) + " measures.");
+            try {
+                wd.join();
+            } catch (InterruptedException e) {
+                LOG.log(Level.SEVERE, e.getMessage());
+            } finally {
+                prettyPrint(map);
             }
+        }
+    }
+
+    private synchronized void prettyPrint(Map<Integer, Integer> map) {
+        Set<Integer> keys = map.keySet();
+        for (Integer i : keys) {
+            System.out.println("Sensor " + i + " has " + map.get(i) + " measures.");
         }
     }
 
