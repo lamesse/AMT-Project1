@@ -87,7 +87,23 @@ public class DAOMeasure implements DAOMeasureLocal {
     }
 
     private void updateSensorCounterFact(Measure m) {
-        FactKey key = new FactKey("sensorCounter", m.getSensor().getType(), new Date(m.getTimestamp()));
+        FactKey key = new FactKey("sensorCounter", m.getSensor().getId().toString(), new Date(0));
+        Fact fact = daoFact.findByIdForUpdate(key);
+        double counter;
+        if (fact == null) {
+            Sensor s = m.getSensor();
+            fact = new Fact(key, s.isIsPublic(), s.getOrg());
+            fact.setMax(0);
+            fact.setAvg(0);
+            fact.setMin(0);
+            counter = 1;
+        } else {
+            counter = fact.getAvgCounter();
+            ++counter;
+        }
+        fact.setAvgCounter(counter);
+        em.persist(fact);
+        em.flush();
     }
 
     @Override
