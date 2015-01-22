@@ -61,7 +61,6 @@ public class Tester {
     public void test() {
         wd.start();
         wc.start();
-        new WorkerGetter().start();
         for (int i = FIRST_SENSOR_ID; i < NUMBER_OF_THREAD + FIRST_SENSOR_ID; ++i) {
             new TestWorker(i).start();
         }
@@ -210,23 +209,6 @@ public class Tester {
         Set<Integer> keys = map.keySet();
         for (Integer i : keys) {
             System.out.println("Sensor " + i + " has " + map.get(i) + " measures.");
-        }
-    }
-
-    private class WorkerGetter extends Thread {
-
-        private WebTarget target;
-
-        @Override
-        public void run() {
-            try {
-                wc.join();
-                target = client.target(LOCALHOST + PATH_GET_FACT);
-                Response r =  target.request().post(Entity.json(new FactDTO()));
-                System.out.println(r.toString());
-            } catch (InterruptedException e) {
-                LOG.log(Level.SEVERE, e.getMessage());
-            }
         }
     }
 
