@@ -38,6 +38,8 @@ import ch.heigvd.amt.model.Sensor;
 import ch.heigvd.amt.model.User;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
@@ -255,11 +257,27 @@ public class ServiceOrganization {
     @Consumes("application/json")
     public Response addMeasure(Measure measure, @PathParam("sensorId") String sensorId) {
         measure.setSensor(sensDAO.find(Long.parseLong(sensorId)));
-        mesDAO.create(measure);
+
+        boolean success = false;
+        int numberOfRemainingAttempts = 20;
+        while (!success && numberOfRemainingAttempts > 0) {
+            numberOfRemainingAttempts--;
+            try {
+                mesDAO.create(measure);
+                success = true;
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "\tException addMeasure... trying again...");
+            }
+        }
+        
+        if (!success) {
+            throw new RuntimeException("boum");
+        }
+
         return Response.status(201).entity("CREATED").build();
     }
-    
-    
+    private static final Logger LOG = Logger.getLogger(ServiceOrganization.class.getName());
+
     @GET // OK
     @Path("/{orgId}/facts")
     @Produces("application/json")

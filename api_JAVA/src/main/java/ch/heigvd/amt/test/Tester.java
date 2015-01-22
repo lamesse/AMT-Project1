@@ -1,11 +1,9 @@
 package ch.heigvd.amt.test;
 
 import ch.heigvd.amt.generator.Generator;
-import ch.heigvd.amt.model.Fact;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -34,7 +32,7 @@ public class Tester {
     private static final String MEASURE = "/measures";
     private static final int NUMBER_OF_THREAD = Generator.NUMBER_OF_SENSORS_PER_TYPE * 2;
     private static final int FIRST_SENSOR_ID = 3;
-    private static final int NUMBER_OF_MEASURES = 10;
+    private static final int NUMBER_OF_MEASURES = 100;
     private static final Random RAND = new Random();
     private static final long ONE_DAY = 86400000; // ms
     private static final int MAX_RANGE = 1000;
@@ -62,7 +60,7 @@ public class Tester {
     public void test() {
         wd.start();
         wc.start();
-//        new WorkerGetter().start();
+        new WorkerGetter().start();
         for (int i = FIRST_SENSOR_ID; i < NUMBER_OF_THREAD + FIRST_SENSOR_ID; ++i) {
             new TestWorker(i).start();
         }
@@ -156,7 +154,10 @@ public class Tester {
                             max = num;
                         }
                         avg += num;
-                        //System.out.println("Status code : " + obj.getLong(KEY_STATUS_CODE));
+                        long status = obj.getLong(KEY_STATUS_CODE);
+                        if (status != 201) {
+                            System.out.println("Status code : " + obj.getLong(KEY_STATUS_CODE));
+                        }
                     }
                     prettyPrint(ts, min, max, avg, counter);
                 }
@@ -220,7 +221,7 @@ public class Tester {
             try {
                 wc.join();
                 target = client.target(LOCALHOST + PATH_GET_FACT);
-//                List<Fact> list =  target.request().get(List.class);
+//                Fact f =  target.request().get(Fact.class);
 //                System.out.println(list.size());
             } catch (InterruptedException e) {
                 LOG.log(Level.SEVERE, e.getMessage());
