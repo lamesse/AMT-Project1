@@ -62,7 +62,7 @@ public class Tester {
     public void test() {
         wd.start();
         wc.start();
-        new WorkerGetter().start();
+//        new WorkerGetter().start();
         for (int i = FIRST_SENSOR_ID; i < NUMBER_OF_THREAD + FIRST_SENSOR_ID; ++i) {
             new TestWorker(i).start();
         }
@@ -119,7 +119,7 @@ public class Tester {
         @Override
         public void run() {
             int i = 0;
-            while (i < (NUMBER_OF_THREAD * NUMBER_OF_MEASURES) + 1) {
+            while (i < NUMBER_OF_THREAD * NUMBER_OF_MEASURES) {
                 try {
                     JSONObject json = bufferDaily.get();
                     Map<Long, LinkedList<JSONObject>> tmp = map.get(json.getString(KEY_TYPE));
@@ -220,8 +220,8 @@ public class Tester {
             try {
                 wc.join();
                 target = client.target(LOCALHOST + PATH_GET_FACT);
-                List<Fact> list =  target.request().get(List.class);
-                System.out.println(list.size());
+//                List<Fact> list =  target.request().get(List.class);
+//                System.out.println(list.size());
             } catch (InterruptedException e) {
                 LOG.log(Level.SEVERE, e.getMessage());
             }
