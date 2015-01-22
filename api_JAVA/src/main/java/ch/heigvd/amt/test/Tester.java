@@ -1,9 +1,11 @@
 package ch.heigvd.amt.test;
 
 import ch.heigvd.amt.generator.Generator;
+import ch.heigvd.amt.model.Fact;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -28,10 +30,11 @@ public class Tester {
 
     private static final String LOCALHOST = "http://localhost:8080/api_JAVA/api";
     private static final String PATH = "organizations/1/sensors/";
+    private static final String PATH_GET_FACT = "organizations/1/facts/";
     private static final String MEASURE = "/measures";
     private static final int NUMBER_OF_THREAD = Generator.NUMBER_OF_SENSORS_PER_TYPE * 2;
     private static final int FIRST_SENSOR_ID = 3;
-    private static final int NUMBER_OF_MEASURES = 100;
+    private static final int NUMBER_OF_MEASURES = 10;
     private static final Random RAND = new Random();
     private static final long ONE_DAY = 86400000; // ms
     private static final int MAX_RANGE = 1000;
@@ -52,6 +55,7 @@ public class Tester {
 
     private final Buffer<JSONObject> bufferDaily = new Buffer<>();
     private final Buffer<JSONObject> bufferCounter = new Buffer<>();
+    private final Client client = ClientBuilder.newClient().register(JacksonFeature.class);
     private final WorkerDaily wd = new WorkerDaily();
     private final WorkerCounter wc = new WorkerCounter();
 
@@ -66,7 +70,6 @@ public class Tester {
 
     private class TestWorker extends Thread {
 
-        private final Client client = ClientBuilder.newClient().register(JacksonFeature.class);
         private final WebTarget target;
         private final int sensorId;
 
@@ -116,7 +119,7 @@ public class Tester {
         @Override
         public void run() {
             int i = 0;
-            while (i < (NUMBER_OF_THREAD * NUMBER_OF_MEASURES ) + 1) {
+            while (i < (NUMBER_OF_THREAD * NUMBER_OF_MEASURES) + 1) {
                 try {
                     JSONObject json = bufferDaily.get();
                     Map<Long, LinkedList<JSONObject>> tmp = map.get(json.getString(KEY_TYPE));
@@ -210,10 +213,15 @@ public class Tester {
 
     private class WorkerGetter extends Thread {
 
+        private WebTarget target;
+
         @Override
         public void run() {
             try {
                 wc.join();
+                target = client.target(LOCALHOST + PATH_GET_FACT);
+                List<Fact> list =  target.request().get(List.class);
+                System.out.println(list.size());
             } catch (InterruptedException e) {
                 LOG.log(Level.SEVERE, e.getMessage());
             }

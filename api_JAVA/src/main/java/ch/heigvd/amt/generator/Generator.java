@@ -71,7 +71,7 @@ public class Generator implements IGenerator {
     private final static String password = "toto";
     private final static String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@" + organization.toLowerCase() + ".ch";
     public final static String[] sensorType = {"Quantum sensor", "Speed sensor"};
-    public final static int NUMBER_OF_SENSORS_PER_TYPE = 1;
+    public final static int NUMBER_OF_SENSORS_PER_TYPE = 2;
 
     @Override
     public void generateTest() {
