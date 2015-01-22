@@ -269,7 +269,7 @@ public class ServiceOrganization {
                 LOG.log(Level.SEVERE, "\tException addMeasure... trying again...");
             }
         }
-        
+
         if (!success) {
             throw new RuntimeException("boum");
         }

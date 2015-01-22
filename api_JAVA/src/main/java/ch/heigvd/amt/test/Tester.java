@@ -1,5 +1,6 @@
 package ch.heigvd.amt.test;
 
+import ch.heigvd.amt.dto.FactDTO;
 import ch.heigvd.amt.generator.Generator;
 import java.sql.Date;
 import java.util.HashMap;
@@ -221,8 +222,8 @@ public class Tester {
             try {
                 wc.join();
                 target = client.target(LOCALHOST + PATH_GET_FACT);
-//                Fact f =  target.request().get(Fact.class);
-//                System.out.println(list.size());
+                Response r =  target.request().post(Entity.json(new FactDTO()));
+                System.out.println(r.toString());
             } catch (InterruptedException e) {
                 LOG.log(Level.SEVERE, e.getMessage());
             }
