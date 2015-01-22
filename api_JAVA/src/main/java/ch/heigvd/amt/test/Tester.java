@@ -53,10 +53,12 @@ public class Tester {
     private final Buffer<JSONObject> bufferDaily = new Buffer<>();
     private final Buffer<JSONObject> bufferCounter = new Buffer<>();
     private final WorkerDaily wd = new WorkerDaily();
+    private final WorkerCounter wc = new WorkerCounter();
 
     public void test() {
         wd.start();
-        new WorkerCounter().start();
+        wc.start();
+        new WorkerGetter().start();
         for (int i = FIRST_SENSOR_ID; i < NUMBER_OF_THREAD + FIRST_SENSOR_ID; ++i) {
             new TestWorker(i).start();
         }
@@ -114,7 +116,7 @@ public class Tester {
         @Override
         public void run() {
             int i = 0;
-            while (i < NUMBER_OF_THREAD * NUMBER_OF_MEASURES) {
+            while (i < (NUMBER_OF_THREAD * NUMBER_OF_MEASURES ) + 1) {
                 try {
                     JSONObject json = bufferDaily.get();
                     Map<Long, LinkedList<JSONObject>> tmp = map.get(json.getString(KEY_TYPE));
@@ -151,7 +153,7 @@ public class Tester {
                             max = num;
                         }
                         avg += num;
-                        System.out.println("Status code : " + obj.getLong(KEY_STATUS_CODE));
+                        //System.out.println("Status code : " + obj.getLong(KEY_STATUS_CODE));
                     }
                     prettyPrint(ts, min, max, avg, counter);
                 }
@@ -203,6 +205,18 @@ public class Tester {
         Set<Integer> keys = map.keySet();
         for (Integer i : keys) {
             System.out.println("Sensor " + i + " has " + map.get(i) + " measures.");
+        }
+    }
+
+    private class WorkerGetter extends Thread {
+
+        @Override
+        public void run() {
+            try {
+                wc.join();
+            } catch (InterruptedException e) {
+                LOG.log(Level.SEVERE, e.getMessage());
+            }
         }
     }
 
