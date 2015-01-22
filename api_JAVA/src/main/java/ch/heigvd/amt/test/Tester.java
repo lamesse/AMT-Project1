@@ -43,8 +43,9 @@ public class Tester {
     private static final String KEY_VALUE = "value";
     private static final String KEY_TIMESTAMP = "timestamp";
     private static final String KEY_STATUS_CODE = "status";
+    private static final String KEY_SENSOR_ID = "sensorId";
     private static final Map<Integer, String> sensorType = new HashMap<>();
-    
+
     private static final Long ts = System.currentTimeMillis();
 
     static {
@@ -53,10 +54,12 @@ public class Tester {
         }
     }
 
-    private final Buffer<JSONObject> buffer = new Buffer<>();
+    private final Buffer<JSONObject> bufferDaily = new Buffer<>();
+    private final Buffer<JSONObject> bufferCounter = new Buffer<>();
 
     public void test() {
-        new Worker().start();
+        new WorkerDaily().start();
+        new WorkerCounter().start();
         for (int i = FIRST_SENSOR_ID; i < NUMBER_OF_THREAD + FIRST_SENSOR_ID; ++i) {
             new TestWorker(i).start();
         }
@@ -82,7 +85,10 @@ public class Tester {
                 json.put(KEY_TIMESTAMP, ts - (RAND.nextInt(7) * ONE_DAY));
                 Response r = target.request().post(Entity.json(json.toString()));
                 json.put(KEY_STATUS_CODE, r.getStatus());
-                buffer.put(json);
+                bufferDaily.put(json);
+                JSONObject counter = new JSONObject();
+                counter.put(KEY_SENSOR_ID, sensorId);
+                bufferCounter.put(counter);
             }
         }
     }
@@ -104,7 +110,7 @@ public class Tester {
         }
     }
 
-    private class Worker extends Thread {
+    private class WorkerDaily extends Thread {
 
         private final Map<String, Map<Long, LinkedList<JSONObject>>> map = new HashMap<>();
 
@@ -113,7 +119,7 @@ public class Tester {
             int i = 0;
             while (i < NUMBER_OF_THREAD * NUMBER_OF_MEASURES) {
                 try {
-                    JSONObject json = buffer.get();
+                    JSONObject json = bufferDaily.get();
                     Map<Long, LinkedList<JSONObject>> tmp = map.get(json.getString(KEY_TYPE));
                     if (tmp == null) {
                         tmp = new HashMap<>();
@@ -154,12 +160,47 @@ public class Tester {
                 }
             }
         }
+
+        private void prettyPrint(Long timestamp, int min, int max, int avg, int counter) {
+            System.out.print(new Date(timestamp) + " : { min : " + min + ", ");
+            System.out.print("max : " + max + ", avg : " + (avg / counter) + ", counter : " + counter + " }");
+            System.out.println("\n");
+        }
     }
-    
-    private void prettyPrint(Long timestamp, int min, int max, int avg, int counter) {
-        System.out.print(new Date(timestamp) + " : { min : " + min + ", ");
-        System.out.print( "max : " + max + ", avg : " + (avg / counter) + ", counter : " + counter + " }");
-        System.out.println("\n");
+
+    private class WorkerCounter extends Thread {
+
+        private final Map<Integer, Integer> map = new HashMap<>();
+
+        @Override
+        public void run() {
+            int i = 0;
+            while (i < NUMBER_OF_THREAD * NUMBER_OF_MEASURES) {
+                try {
+                    JSONObject json = bufferCounter.get();
+                    int sensId = json.getInt(KEY_SENSOR_ID);
+                    int count;
+                    if (map.containsKey(sensId)) {
+                        count = map.get(sensId);
+                    } else {
+                        count = 0;
+                    }
+                    ++count;
+                    map.put(sensId, count);
+                } catch (InterruptedException e) {
+                    LOG.log(Level.SEVERE, e.getMessage());
+                }
+                ++i;
+            }
+            prettyPrint();
+        }
+
+        private void prettyPrint() {
+            Set<Integer> keys = map.keySet();
+            for (Integer i : keys) {
+                System.out.println("Sensor " + i + " has " + map.get(i) + " measures.");
+            }
+        }
     }
 
     public static void main(String[] args) {
